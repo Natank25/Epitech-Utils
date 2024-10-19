@@ -1,4 +1,4 @@
-package com.github.natank25.epitechutils
+package io.github.natank25.epitechutils
 
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.openapi.components.service

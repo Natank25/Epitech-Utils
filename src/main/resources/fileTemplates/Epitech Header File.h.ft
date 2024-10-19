@@ -1,0 +1,11 @@
+/*
+** EPITECH PROJECT, ${YEAR}
+** ${PROJECT_NAME}
+** File description:
+** ${FILE_DESCRIPTION}
+*/
+
+#[[#ifndef]]# ${INCLUDE_GUARD}
+#[[#define]]# ${INCLUDE_GUARD}
+
+#[[#endif]]# //${INCLUDE_GUARD}

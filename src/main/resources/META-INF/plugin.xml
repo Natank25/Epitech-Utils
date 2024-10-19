@@ -2,17 +2,19 @@
 <idea-plugin>
     <id>com.github.natank25.epitechutils</id>
     <name>Epitech-Utils</name>
-    <vendor>natank25</vendor>
+    <vendor>Natank25</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <depends>com.intellij.clion</depends>
+    <depends>com.intellij.modules.clion</depends>
+    
+    <actions>
+        <action class="io.github.natank25.epitechutils.files.EpitechFileCreation" text="Epitech File">
+            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
+        </action>
+    </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.natank25.epitechutils.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <moduleType id="EpitechModule" implementationClass="io.github.natank25.epitechutils.module.EpitechModuleType" />
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.natank25.epitechutils.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
 </idea-plugin>
