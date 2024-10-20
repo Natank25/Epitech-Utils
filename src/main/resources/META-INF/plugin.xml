@@ -15,6 +15,14 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <moduleType id="EpitechModule" implementationClass="io.github.natank25.epitechutils.module.EpitechModuleType" />
+        <directoryProjectGenerator implementation="io.github.natank25.epitechutils.module.EpitechDirectoryProjectGenerator"/>
+        <newProjectWizard.languageGenerator implementation="io.github.natank25.epitechutils.module.EpitechNewProjectWizard"/>
+
+        <moduleBuilder builderClass="io.github.natank25.epitechutils.module.EpitechModuleBuilder"/>
+        <projectConfigurable parentId="language"
+                             instance="io.github.natank25.epitechutils.module.EpitechConfigurable"
+                             id="io.github.natank25.epitechutils.module.EpitechConfigurable"
+                             displayName="Epitech"/>
+        <notificationGroup displayType="BALLOON" id="EpitechUtils"/>
     </extensions>
 </idea-plugin>

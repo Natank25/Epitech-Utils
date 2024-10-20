@@ -1,38 +1,25 @@
 package io.github.natank25.epitechutils.module;
 
-import com.intellij.ide.util.projectWizard.EmptyModuleBuilder;
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleTypeManager;
-import com.intellij.ultimate.UltimateVerifier;
 import io.github.natank25.epitechutils.Icons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import javax.swing.*;
 
-public class EpitechModuleType extends ModuleType<EmptyModuleBuilder> {
+public class EpitechModuleType extends ModuleType<EpitechModuleBuilder> {
 	
-	public static final @NonNls String ID = "EpitechModule";
-	
-	public static @NotNull ModuleType<?> getInstance() {
-		return ModuleTypeManager.getInstance().findByID(ID);
-	}
+	public static final EpitechModuleType INSTANCE = new EpitechModuleType();
 	
 	protected EpitechModuleType() {
-		super(ID);
-		UltimateVerifier.getInstance();
+		super("EpitechModule");
 	}
 	
 	@Override
-	public @NotNull EmptyModuleBuilder createModuleBuilder() {
-		return new EmptyModuleBuilder() {
-			public ModuleType<?> getModuleType() {
-				return ModuleTypeManager.getInstance().findByID(ID);
-			}
-		};
+	public @NotNull EpitechModuleBuilder createModuleBuilder() {
+		return new EpitechModuleBuilder();
 	}
 	
 	@Override
@@ -42,16 +29,11 @@ public class EpitechModuleType extends ModuleType<EmptyModuleBuilder> {
 	
 	@Override
 	public @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String getDescription() {
-		return "Epitech Project Description";
+		return "Epitech Project Module";
 	}
 	
 	@Override
 	public @NotNull Icon getNodeIcon(boolean isOpened) {
 		return Icons.EpitechIcon;
-	}
-	
-	@Override
-	public boolean isSupportedRootType(JpsModuleSourceRootType<?> type) {
-		return type != JavaSourceRootType.TEST_SOURCE;
 	}
 }
