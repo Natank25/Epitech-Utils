@@ -42,7 +42,7 @@ public class EpitechModuleBuilder extends ModuleBuilder {
 		
 		@Override
 		public JComponent getComponent() {
-			return new JLabel("SALUT");
+			return new JLabel("EpitechModuleBuilder:45");
 		}
 		
 		

@@ -43,7 +43,7 @@ public class EpitechNewProjectWizard implements LanguageGeneratorNewProjectWizar
     @NotNull
     @Override
     public Icon getIcon() {
-        return Icons.EpitechIcon;
+        return Icons.EpitechLogo.EpitechIcon_32x32;
     }
 
     @NotNull
@@ -61,7 +61,7 @@ public class EpitechNewProjectWizard implements LanguageGeneratorNewProjectWizar
         @Override
         public void setupUI(@NotNull Panel builder) {
             builder.row((JLabel) null, (row) -> {
-                row.checkBox("CHECKBOX");
+                row.checkBox("EpitechNewProjectWizard:64");
                 return null;
             });
         }

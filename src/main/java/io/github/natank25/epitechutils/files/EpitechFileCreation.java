@@ -29,8 +29,8 @@ public class EpitechFileCreation extends CreateFileFromTemplateAction implements
 	@Override
 	protected void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory, CreateFileFromTemplateDialog.@NotNull Builder builder) {
 		builder.setTitle("Epitech File");
-		builder.addKind("C File", Icons.EpitechIcon, EpitechTemplates.C_FILE);
-		builder.addKind("Header File", Icons.EpitechIcon, EpitechTemplates.HEADER_FILE);
+		builder.addKind("C File", Icons.EpitechLogo.EpitechIcon_32x32, EpitechTemplates.C_FILE);
+		builder.addKind("Header File", Icons.EpitechLogo.EpitechIcon_32x32, EpitechTemplates.HEADER_FILE);
 	}
 	
 	@Override

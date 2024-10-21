@@ -21,7 +21,7 @@ public class EpitechProjectGeneratorPeer implements ProjectGeneratorPeer<Epitech
 		if (component == null) {
 			synchronized (this) {
 				if (component == null) {
-					return component = new JLabel("MyEpitechNewJLabel");
+					return component = epitechNewProjectPanel.createPanel();
 				}
 			}
 		}

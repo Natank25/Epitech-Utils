@@ -34,6 +34,6 @@ public class EpitechModuleType extends ModuleType<EpitechModuleBuilder> {
 	
 	@Override
 	public @NotNull Icon getNodeIcon(boolean isOpened) {
-		return Icons.EpitechIcon;
+		return Icons.EpitechLogo.EpitechIcon_32x32;
 	}
 }
