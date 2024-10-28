@@ -35,7 +35,7 @@ public class EpitechDirectoryProjectGenerator implements DirectoryProjectGenerat
 	
 	@Override
 	public @Nullable Icon getLogo() {
-		return Icons.EpitechLogo.EpitechIcon_32x32;
+		return Icons.EpitechLogo.EpitechIcon_150x150;
 	}
 	
 	@Override

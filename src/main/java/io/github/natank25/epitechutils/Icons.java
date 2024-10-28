@@ -6,6 +6,6 @@ import javax.swing.*;
 
 public class Icons {
 	public static class EpitechLogo {
-		public static final Icon EpitechIcon_32x32 = IconLoader.getIcon("/icons/EpitechLogo/epitech-logo-32x32.png", Icons.class);
+		public static final Icon EpitechIcon_150x150 = IconLoader.getIcon("/icons/EpitechLogo/epitech-logo-150x150.svg", Icons.class);
 	}
 }
