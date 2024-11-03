@@ -39,10 +39,11 @@ public class EpitechModuleBuilder extends ModuleBuilder {
 	}
 	
 	public class EpitechModuleWizardStep extends ModuleWizardStep {
-		
+	
+		private final EpitechProjectGeneratorPeer peer = new EpitechProjectGeneratorPeer();
 		@Override
 		public JComponent getComponent() {
-			return new JLabel("EpitechModuleBuilder:45");
+			return peer.getComponent();
 		}
 		
 		

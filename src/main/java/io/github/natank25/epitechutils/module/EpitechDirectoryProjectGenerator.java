@@ -9,6 +9,7 @@ import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel;
 import com.intellij.platform.DirectoryProjectGenerator;
+import com.intellij.platform.DirectoryProjectGeneratorBase;
 import com.intellij.platform.ProjectGeneratorPeer;
 import io.github.natank25.epitechutils.Icons;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class EpitechDirectoryProjectGenerator implements DirectoryProjectGenerator<EpitechProjectSettings>, CustomStepProjectGenerator<EpitechProjectSettings> {
+public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorBase<EpitechProjectSettings> implements CustomStepProjectGenerator<EpitechProjectSettings> {
 	
 	@Override
 	public AbstractActionWithPanel createStep(DirectoryProjectGenerator<EpitechProjectSettings> projectGenerator, AbstractNewProjectStep.AbstractCallback<EpitechProjectSettings> callback) {
@@ -25,7 +26,7 @@ public class EpitechDirectoryProjectGenerator implements DirectoryProjectGenerat
 	
 	@Override
 	public @NotNull @NlsContexts.Label String getName() {
-		return "Epitech Directory Project";
+		return "Epitech project";
 	}
 	
 	@Override
@@ -42,13 +43,6 @@ public class EpitechDirectoryProjectGenerator implements DirectoryProjectGenerat
 	public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull EpitechProjectSettings settings, @NotNull Module module) {
 	
 	}
-	
-	
-	@Override
-	public @NotNull ValidationResult validate(@NotNull String baseDirPath) {
-		return ValidationResult.OK;
-	}
-	
 	
 	
 }
