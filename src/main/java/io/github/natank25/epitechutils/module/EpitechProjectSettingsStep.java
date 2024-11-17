@@ -14,6 +14,4 @@ public class EpitechProjectSettingsStep extends ProjectSettingsStepBase<EpitechP
     public EpitechProjectSettingsStep(DirectoryProjectGenerator<EpitechProjectSettings> projectGenerator) {
         super(projectGenerator, new AbstractNewProjectStep.AbstractCallback<>());
     }
-    
-    
 }

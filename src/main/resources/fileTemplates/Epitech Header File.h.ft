@@ -1,11 +1,9 @@
-/*
-** EPITECH PROJECT, ${YEAR}
-** ${PROJECT_NAME}
-** File description:
-** ${FILE_DESCRIPTION}
-*/
+#parse("Epitech Header.h")
+
 
 #[[#ifndef]]# ${INCLUDE_GUARD}
-#[[#define]]# ${INCLUDE_GUARD}
+    #[[#define]]# ${INCLUDE_GUARD}
+
+
 
 #[[#endif]]# //${INCLUDE_GUARD}

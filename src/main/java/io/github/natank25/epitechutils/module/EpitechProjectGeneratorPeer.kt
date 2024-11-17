@@ -1,59 +1,61 @@
-package io.github.natank25.epitechutils.module;
+package io.github.natank25.epitechutils.module
 
-import com.intellij.ide.util.projectWizard.SettingsStep;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.platform.ProjectGeneratorPeer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.util.projectWizard.SettingsStep
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.util.Disposer
+import com.intellij.platform.ProjectGeneratorPeer
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
+import javax.swing.JComponent
+import javax.swing.JTextField
 
-import javax.swing.*;
+class EpitechProjectGeneratorPeer : ProjectGeneratorPeer<EpitechProjectSettings>, Disposable {
+    private val settings = EpitechProjectSettings()
+    lateinit var panel: DialogPanel
+    private var checkValid: Runnable = Runnable{validate()};
 
-public class EpitechProjectGeneratorPeer implements ProjectGeneratorPeer<EpitechProjectSettings> {
-	private final EpitechNewProjectPanel epitechNewProjectPanel;
-	private JComponent component;
-	private Runnable checkValid;
-	
-	public EpitechProjectGeneratorPeer() {
-		epitechNewProjectPanel = new EpitechNewProjectPanel(true);
-	}
-	
-	@Override
-	public @NotNull JComponent getComponent(@NotNull TextFieldWithBrowseButton myLocationField, @NotNull Runnable checkValid) {
-		epitechNewProjectPanel.checkValid = checkValid;
-		checkValid.run();
-		return getComponent();
-	}
-	
-	@Override
-	public @NotNull JComponent getComponent() {
-		if (component == null) {
-			return component = epitechNewProjectPanel.createPanel();
-		}
-		return component;
-	}
-	
-	@Override
-	public void buildUI(@NotNull SettingsStep settingsStep) {
-	}
-	
-	@Override
-	public @NotNull EpitechProjectSettings getSettings() {
-		return epitechNewProjectPanel.getData();
-	}
-	
-	@Override
-	public @Nullable ValidationInfo validate() {
-		ValidationInfo info;
-		if (null != (info = epitechNewProjectPanel.validate()))
-			return info;
-		return null;
-	}
-	
-	@Override
-	public boolean isBackgroundJobRunning() {
-		return false;
-	}
-	
+    override fun getComponent(myLocationField: TextFieldWithBrowseButton, checkValid: Runnable): JComponent {
+        this.checkValid = checkValid;
+        return super.getComponent(myLocationField, checkValid)
+    }
+
+    private fun checkValid() {
+        panel.apply()
+        checkValid.run()
+    }
+
+    override fun getComponent(): JComponent {
+        panel = panel {
+            row("Binary Name :"){
+                textField()
+                    .bindText(settings::binName)
+                    .onChanged {
+                        checkValid()
+                    }
+            }
+        }
+        checkValid()
+        return panel
+    }
+
+    override fun buildUI(settingsStep: SettingsStep) {
+    }
+
+    override fun getSettings(): EpitechProjectSettings {
+        return settings
+    }
+
+    override fun validate(): ValidationInfo? {
+        return settings.validate()
+    }
+
+    override fun isBackgroundJobRunning(): Boolean {
+        return false
+    }
+
+    override fun dispose() {
+    }
 }
