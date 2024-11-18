@@ -1,6 +1,10 @@
-/*
-** EPITECH PROJECT, ${YEAR}
-** ${PROJECT_NAME}
-** File description:
-** ${FILE_DESCRIPTION}
-*/
+#parse("Epitech Header.h")
+
+#set($libs_arr = $libs.split(" "))
+#set($lib = "")
+
+#foreach($lib in $libs_arr)
+#[[#include]]# "$lib"
+#end
+
+${Main_Function}

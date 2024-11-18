@@ -27,11 +27,13 @@ public class EpitechModuleType extends ModuleType<EpitechModuleBuilder> {
 	
 	@Override
 	public @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String getDescription() {
-		return "Epitech Project Module";
+		return "Epitech project module";
 	}
 	
 	@Override
 	public @NotNull Icon getNodeIcon(boolean isOpened) {
 		return Icons.EpitechLogo.EpitechIcon_150x150;
 	}
+	
+	
 }

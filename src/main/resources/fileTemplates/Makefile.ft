@@ -1,0 +1,53 @@
+#[[##]]#
+#[[##]]# EPITECH PROJECT, ${YEAR}
+#[[##]]# ${PROJECT_NAME}
+#[[##]]# File description:
+#[[##]]# ${FILE_NAME}
+#[[##]]#
+
+COMMON_SRC = $(shell find ./src -not -name "main.c" -type f -name *.c)
+
+COMMON_OBJ = $(COMMON_SRC:.c=.o)
+
+SRC = src/main.c
+
+OBJ = $(SRC:.c=.o)
+
+TESTS_SRC = $(shell find ./tests -type f -name *.c)
+
+TESTS_OBJ = $(TESTS_SRC:.c=.o)
+
+NAME = ${BIN_NAME}
+
+CPPFLAGS = -iquote ./include/
+
+CFLAGS = -Wall -Wextra
+
+all: $(NAME)
+
+$(NAME): $(COMMON_OBJ) $(OBJ) $(TESTS_OBJ)
+	$(CC) $(COMMON_OBJ) $(OBJ) -o $(NAME)
+
+dev:	fclean
+	$(CC) -g3 $(CPPFLAGS) $(COMMON_SRC) $(SRC) -o $(NAME)
+
+sanity-dev:	fclean
+	$(CC) -g3 -fsanitize=address $(CPPFLAGS) $(COMMON_SRC) $(SRC) -o $(NAME)
+
+clean:
+	rm -f $(COMMON_OBJ) $(OBJ) $(TESTS_OBJ)
+
+fclean:	clean
+	rm -f $(NAME)
+	rm -f unit_tests
+
+re:	fclean all
+
+unit_tests: fclean
+	$(CC) -g3 $(CPPFLAGS) $(CFLAGS) $(COMMON_SRC) $(TESTS_SRC) --coverage \
+	-lcriterion -o unit_tests
+
+tests_run: unit_tests
+	./unit_tests
+
+.PHONY: all clean fclean re

@@ -7,11 +7,13 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.clion</depends>
     <depends>com.intellij.modules.clion</depends>
-    
+    <depends>com.intellij.clion-makefile</depends>
+    <depends>name.kropp.intellij.makefile</depends>
+
     <actions>
-        <action class="io.github.natank25.epitechutils.files.EpitechFileCreation" text="Epitech File">
-            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
-        </action>
+        <action id="io.github.natank25.epitechutils.actions.EpitechNewFileAction"
+                class="io.github.natank25.epitechutils.actions.EpitechNewFileAction" text="EpitechNewFileAction"
+                description="Creates a new file for Epitech Projects"/>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
