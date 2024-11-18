@@ -16,7 +16,7 @@ version = providers.gradleProperty("pluginVersion").get()
 
 // Set the JVM language level used to build the project.
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 // Configure project's dependencies
@@ -92,8 +92,8 @@ intellijPlatform {
     }
 
     signing {
-        certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN")
-        privateKey = providers.environmentVariable("PRIVATE_KEY")
+        certificateChainFile.set(file("certificate/chain.crt"))
+        privateKeyFile.set(file("certificate/private.pem"))
         password = providers.environmentVariable("PRIVATE_KEY_PASSWORD")
     }
 
