@@ -2,9 +2,10 @@
 
 #set($libs_arr = $libs.split(" "))
 #set($lib = "")
-
 #foreach($lib in $libs_arr)
-#[[#include]]# "$lib"
+    #if($lib != "")
+    #[[#include]]# "$lib"
+    #end
 #end
 
-${Main_Function}
+${Main_Function}()

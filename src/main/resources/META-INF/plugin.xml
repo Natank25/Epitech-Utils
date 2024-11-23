@@ -3,6 +3,13 @@
     <id>com.github.natank25.epitechutils</id>
     <name>Epitech-Utils</name>
     <vendor>Natank25</vendor>
+    <description><![CDATA[
+        Plugin made by an Epitech's student for Epitech's students.
+        It allows you to create a project with a Makefile, default folders and files and run configurations.
+
+        In the future, I plan to:
+        - Create an action to convert an already existing project into a lib
+    ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.clion</depends>

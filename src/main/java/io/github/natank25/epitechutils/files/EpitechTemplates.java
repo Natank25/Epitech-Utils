@@ -17,7 +17,7 @@ import java.util.Properties;
 public class EpitechTemplates {
 	public static final String C_FILE = "Epitech C File.c";
 	public static final String HEADER_FILE = "Epitech Header File.h";
-	public static final String MAKEFILE = "Makefile";
+	public static final String MAKEFILE = "Makefile.mk";
 	
 	public static @NotNull PsiElement createFromTemplate(Project project, String fileName, PsiDirectory dir, Templates template, @Nullable Properties properties){
 		Properties defaultProperties = EpitechNewFileAction.createProperties(project, fileName);

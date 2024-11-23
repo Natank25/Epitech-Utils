@@ -51,38 +51,44 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 	public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull EpitechProjectSettings settings, @NotNull Module module) {
 		ApplicationManager.getApplication().runWriteAction(() ->
 		{
-			VirtualFile include;
-			VirtualFile src;
-			VirtualFile tests;
-			
-			try {
-				include = baseDir.createChildDirectory(project, "include");
-				EpitechTemplates.createHeaderFileFromTemplate(project, project.getName() + ".h", include);
-				
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			
-			try {
-				src = baseDir.createChildDirectory(project, "src");
-				EpitechTemplates.createCFileFromTemplate(project, "main.c", src);
-				EpitechTemplates.createCFileFromTemplate(project, project.getName() + ".c", src);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			
-			try {
-				tests = baseDir.createChildDirectory(project, "tests");
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			createIncludeDirectory(project, baseDir);
+			createSourceDirectory(project, baseDir);
+			createTestsDirectory(project, baseDir);
 			EpitechTemplates.createMakefileFileFromTemplate(project, baseDir, settings.getBinName());
 		});
-		MakefileUtil.linkMakefileProject(project, baseDir, (mkBuildSystemDetector, project1) -> {
-			System.out.println("hi");
-			return null;
-		});
+		MakefileUtil.linkMakefileProject(project, baseDir, (mkBuildSystemDetector, project1) -> null);
 		generateRunConfiguration(project, settings.getBinName());
+	}
+	
+	private static void createTestsDirectory(@NotNull Project project, @NotNull VirtualFile baseDir) {
+		VirtualFile tests;
+		try {
+			tests = baseDir.createChildDirectory(project, "tests");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private static void createSourceDirectory(@NotNull Project project, @NotNull VirtualFile baseDir) {
+		VirtualFile src;
+		try {
+			src = baseDir.createChildDirectory(project, "src");
+			EpitechTemplates.createCFileFromTemplate(project, "main.c", src);
+			EpitechTemplates.createCFileFromTemplate(project, project.getName() + ".c", src);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private static void createIncludeDirectory(@NotNull Project project, @NotNull VirtualFile baseDir) {
+		VirtualFile include;
+		try {
+			include = baseDir.createChildDirectory(project, "include");
+			EpitechTemplates.createHeaderFileFromTemplate(project, project.getName() + ".h", include);
+			
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	private void generateRunConfiguration(Project project, String binary_name){

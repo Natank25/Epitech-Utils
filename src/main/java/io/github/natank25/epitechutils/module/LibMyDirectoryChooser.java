@@ -1,6 +1,5 @@
 package io.github.natank25.epitechutils.module;
 
-import J.L.a.V;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;

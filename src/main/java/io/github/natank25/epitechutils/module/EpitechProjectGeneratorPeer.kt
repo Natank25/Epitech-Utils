@@ -19,15 +19,6 @@ class EpitechProjectGeneratorPeer : ProjectGeneratorPeer<EpitechProjectSettings>
 
     override fun getComponent(myLocationField: TextFieldWithBrowseButton, checkValid: Runnable): JComponent {
         this.checkValid = checkValid;
-        return super.getComponent(myLocationField, checkValid)
-    }
-
-    private fun checkValid() {
-        panel.apply()
-        checkValid.run()
-    }
-
-    override fun getComponent(): JComponent {
         panel = panel {
             row("Binary Name :"){
                 textField()
@@ -39,6 +30,12 @@ class EpitechProjectGeneratorPeer : ProjectGeneratorPeer<EpitechProjectSettings>
         }
         checkValid()
         return panel
+    }
+
+
+    private fun checkValid() {
+        panel.apply()
+        checkValid.run()
     }
 
     override fun buildUI(settingsStep: SettingsStep) {
