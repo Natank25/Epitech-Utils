@@ -1,31 +1,25 @@
-package io.github.natank25.epitechutils.module;
+package io.github.natank25.epitechutils.module
 
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.NlsContexts;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.options.Configurable
+import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.util.NlsContexts.ConfigurableName
+import javax.swing.JComponent
+import javax.swing.JLabel
 
-import javax.swing.*;
+class EpitechConfigurable : Configurable {
+    override fun createComponent(): JComponent? {
+        return JLabel("MyEpitechNewJLabel") //TODO ProjectSettingsPanel
+    }
 
-public class EpitechConfigurable implements Configurable {
-	
-	@Override
-	public @Nullable JComponent createComponent() {
-		return new JLabel("MyEpitechNewJLabel"); //TODO ProjectSettingsPanel
-	}
-	
-	@Override
-	public boolean isModified() {
-		return false;
-	}
-	
-	@Override
-	public void apply() throws ConfigurationException {
-	
-	}
-	
-	@Override
-	public @NlsContexts.ConfigurableName String getDisplayName() {
-		return "Epitech Config";
-	}
+    override fun isModified(): Boolean {
+        return false
+    }
+
+    @Throws(ConfigurationException::class)
+    override fun apply() {
+    }
+
+    override fun getDisplayName(): @ConfigurableName String {
+        return "Epitech Config"
+    }
 }

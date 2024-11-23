@@ -1,27 +1,24 @@
-package io.github.natank25.epitechutils.module;
+package io.github.natank25.epitechutils.module
 
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
-public class LibMyDocumentActionListener implements DocumentListener {
-	private final Runnable checkValid;
-	
-	public LibMyDocumentActionListener(Runnable checkValid) {
-		this.checkValid = checkValid;
-	}
-	
-	@Override
-	public void changedUpdate(DocumentEvent e) {
-		checkValid.run();
-	}
-	
-	@Override
-	public void insertUpdate(DocumentEvent e) {
-		checkValid.run();
-	}
-	
-	@Override
-	public void removeUpdate(DocumentEvent e) {
-		checkValid.run();
-	}
+class LibMyDocumentActionListener(checkValid: Runnable) : DocumentListener {
+    private val checkValid: Runnable
+
+    init {
+        this.checkValid = checkValid
+    }
+
+    override fun changedUpdate(e: DocumentEvent?) {
+        checkValid.run()
+    }
+
+    override fun insertUpdate(e: DocumentEvent?) {
+        checkValid.run()
+    }
+
+    override fun removeUpdate(e: DocumentEvent?) {
+        checkValid.run()
+    }
 }

@@ -41,6 +41,7 @@ dependencies {
         clion(providers.gradleProperty("platformVersion"))
         bundledPlugin("com.intellij.clion")
 
+
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
         bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
 

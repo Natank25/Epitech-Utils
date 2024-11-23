@@ -1,55 +1,46 @@
-package io.github.natank25.epitechutils.module;
+package io.github.natank25.epitechutils.module
 
-import com.intellij.ide.util.projectWizard.ModuleBuilder;
-import com.intellij.ide.util.projectWizard.ModuleWizardStep;
-import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.util.ui.JBUI;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.util.projectWizard.ModuleBuilder
+import com.intellij.ide.util.projectWizard.ModuleWizardStep
+import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.module.ModuleType
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.util.Disposer
+import io.github.natank25.epitechutils.module.EpitechModuleBuilder.EpitechModuleWizardStep
+import javax.swing.JComponent
 
-import javax.swing.*;
+class EpitechModuleBuilder : ModuleBuilder() {
+    var configurationData: EpitechProjectSettings? = null
+    var forceGitignore: Boolean = false
 
-public class EpitechModuleBuilder extends ModuleBuilder {
-	public @Nullable EpitechProjectSettings configurationData = null;
-	public boolean forceGitignore = false;
-	
-	@Override
-	public ModuleType<?> getModuleType() {
-		return EpitechModuleType.INSTANCE;
-	}
-	
-	@Override
-	public void setupRootModel(@NotNull ModifiableRootModel modifiableRootModel) {
-		createProject(modifiableRootModel);
-	}
-	
-	@Override
-	public @Nullable ModuleWizardStep getCustomOptionsStep(WizardContext context, Disposable parentDisposable) {
-		ModuleWizardStep step = new EpitechModuleWizardStep();
-		Disposer.register(parentDisposable, step::disposeUIResources);
-		return step;
-	}
-	
-	public void createProject(ModifiableRootModel rootModel) {
-		System.out.println("EpitechModuleBuilder.java:38");
-	}
-	
-	public class EpitechModuleWizardStep extends ModuleWizardStep {
-	
-		private final EpitechProjectGeneratorPeer peer = new EpitechProjectGeneratorPeer();
-		@Override
-		public JComponent getComponent() {
-			return peer.getComponent();
-		}
-		
-		
-		@Override
-		public void updateDataModel() {
-			//TODO Update UI
-		}
-	}
+    override fun getModuleType(): ModuleType<*> {
+        return EpitechModuleType.Companion.INSTANCE
+    }
+
+    override fun setupRootModel(modifiableRootModel: ModifiableRootModel) {
+        createProject(modifiableRootModel)
+    }
+
+    override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable): ModuleWizardStep? {
+        val step: ModuleWizardStep = EpitechModuleWizardStep()
+        Disposer.register(parentDisposable, Disposable { step.disposeUIResources() })
+        return step
+    }
+
+    fun createProject(rootModel: ModifiableRootModel?) {
+        println("EpitechModuleBuilder.java:38")
+    }
+
+    class EpitechModuleWizardStep : ModuleWizardStep() {
+        private val peer = EpitechProjectGeneratorPeer()
+        override fun getComponent(): JComponent {
+            return peer.getComponent()
+        }
+
+
+        override fun updateDataModel() {
+            //TODO Update UI
+        }
+    }
 }

@@ -1,62 +1,44 @@
-package io.github.natank25.epitechutils.module;
+package io.github.natank25.epitechutils.module
 
-import com.intellij.ide.wizard.AbstractNewProjectWizardStep;
-import com.intellij.ide.wizard.GitNewProjectWizardData;
-import com.intellij.ide.wizard.NewProjectWizardStep;
-import com.intellij.ide.wizard.language.LanguageGeneratorNewProjectWizard;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.dsl.builder.Panel;
-import io.github.natank25.epitechutils.Icons;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.ide.wizard.AbstractNewProjectWizardStep
+import com.intellij.ide.wizard.GitNewProjectWizardData
+import com.intellij.ide.wizard.GitNewProjectWizardData.Companion.gitData
+import com.intellij.ide.wizard.NewProjectWizardStep
+import com.intellij.ide.wizard.language.LanguageGeneratorNewProjectWizard
+import com.intellij.openapi.project.Project
+import com.intellij.ui.dsl.builder.Panel
+import io.github.natank25.epitechutils.Icons.EpitechLogo
+import io.github.natank25.epitechutils.module.EpitechNewProjectWizard.EpitechNewProjectWizardStep
+import org.jetbrains.annotations.Nls
+import javax.swing.Icon
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
+class EpitechNewProjectWizard : LanguageGeneratorNewProjectWizard {
+    override val name: String
+        get() = "Epitech Project Wizard"
 
+    override val ordinal: Int
+        get() = 900
 
-public class EpitechNewProjectWizard implements LanguageGeneratorNewProjectWizard {
-    @NotNull
-    @Override
-    public String getName() {
-        return "Epitech Project Wizard";
+    override val icon: Icon
+        get() = EpitechLogo.EpitechIcon_150x150
+
+    override fun createStep(parent: NewProjectWizardStep): NewProjectWizardStep {
+        return EpitechNewProjectWizardStep(parent)
     }
 
-    @Override
-    public int getOrdinal() {
-        return 900;
-    }
-
-    @NotNull
-    @Override
-    public Icon getIcon() {
-        return Icons.EpitechLogo.EpitechIcon_150x150;
-    }
-
-    @NotNull
-    @Override
-    public NewProjectWizardStep createStep(@NotNull NewProjectWizardStep parent) {
-        return new EpitechNewProjectWizardStep(parent);
-    }
-
-    private static class EpitechNewProjectWizardStep extends AbstractNewProjectWizardStep {
-
-        public EpitechNewProjectWizardStep(@NotNull NewProjectWizardStep parentStep) {
-            super(parentStep);
+    private class EpitechNewProjectWizardStep(parentStep: NewProjectWizardStep) :
+        AbstractNewProjectWizardStep(parentStep) {
+        override fun setupUI(builder: Panel) {
+            builder.row() {
+                checkBox("EpitechNewProjectWizard")
+            }
         }
 
-        @Override
-        public void setupUI(@NotNull Panel builder) {
-            builder.row((JLabel) null, (row) -> {
-                row.checkBox("EpitechNewProjectWizard:64");
-                return null;
-            });
-        }
-
-        @Override
-        public void setupProject(@NotNull Project project) {
-            EpitechModuleBuilder builder = new EpitechModuleBuilder();
-            var gitData = GitNewProjectWizardData.Companion.getGitData(this);
-            builder.forceGitignore = gitData != null && gitData.getGit();
-            builder.commit(project);
+        override fun setupProject(project: Project) {
+            val builder = EpitechModuleBuilder()
+            val gitData = gitData
+            builder.forceGitignore = gitData != null && gitData.git
+            builder.commit(project)
         }
     }
 }

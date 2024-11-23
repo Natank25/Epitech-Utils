@@ -1,39 +1,29 @@
-package io.github.natank25.epitechutils.module;
+package io.github.natank25.epitechutils.module
 
-import com.intellij.openapi.module.ModuleType;
-import io.github.natank25.epitechutils.Icons;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.module.ModuleType
+import io.github.natank25.epitechutils.Icons.EpitechLogo
+import org.jetbrains.annotations.Nls
+import javax.swing.Icon
 
-import javax.swing.*;
+class EpitechModuleType protected constructor() : ModuleType<EpitechModuleBuilder?>("EpitechModule") {
+    override fun createModuleBuilder(): EpitechModuleBuilder {
+        return EpitechModuleBuilder()
+    }
 
-public class EpitechModuleType extends ModuleType<EpitechModuleBuilder> {
-	
-	public static final EpitechModuleType INSTANCE = new EpitechModuleType();
-	
-	protected EpitechModuleType() {
-		super("EpitechModule");
-	}
-	
-	@Override
-	public @NotNull EpitechModuleBuilder createModuleBuilder() {
-		return new EpitechModuleBuilder();
-	}
-	
-	@Override
-	public @NotNull @Nls(capitalization = Nls.Capitalization.Title) String getName() {
-		return "Epitech Project";
-	}
-	
-	@Override
-	public @NotNull @Nls(capitalization = Nls.Capitalization.Sentence) String getDescription() {
-		return "Epitech project module";
-	}
-	
-	@Override
-	public @NotNull Icon getNodeIcon(boolean isOpened) {
-		return Icons.EpitechLogo.EpitechIcon_150x150;
-	}
-	
-	
+    override fun getName(): @Nls(capitalization = Nls.Capitalization.Title) String {
+        return "Epitech Project"
+    }
+
+    override fun getDescription(): @Nls(capitalization = Nls.Capitalization.Sentence) String {
+        return "Epitech project module"
+    }
+
+    override fun getNodeIcon(isOpened: Boolean): Icon {
+        return EpitechLogo.EpitechIcon_150x150
+    }
+
+
+    companion object {
+        val INSTANCE: EpitechModuleType = EpitechModuleType()
+    }
 }
