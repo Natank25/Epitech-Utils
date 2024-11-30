@@ -1,7 +1,7 @@
 package io.github.natank25.epitechutils.module;
 
 import com.intellij.openapi.module.ModuleType;
-import io.github.natank25.epitechutils.Icons;
+import io.github.natank25.epitechutils.icons.EpitechUtilsIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +32,7 @@ public class EpitechModuleType extends ModuleType<EpitechModuleBuilder> {
 	
 	@Override
 	public @NotNull Icon getNodeIcon(boolean isOpened) {
-		return Icons.EpitechLogo.EpitechIcon_150x150;
+		return EpitechUtilsIcons.EpitechIcon_150x150;
 	}
 	
 	

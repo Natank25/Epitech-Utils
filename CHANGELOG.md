@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Files are now created using an action and not a file template.
+
 ## [0.0.1-beta.7] - 2024-11-23
 
 ### Changed

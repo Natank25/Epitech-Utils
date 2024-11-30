@@ -6,7 +6,7 @@ import com.intellij.ide.wizard.NewProjectWizardStep;
 import com.intellij.ide.wizard.language.LanguageGeneratorNewProjectWizard;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.dsl.builder.Panel;
-import io.github.natank25.epitechutils.Icons;
+import io.github.natank25.epitechutils.icons.EpitechUtilsIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.Icon;
@@ -28,7 +28,7 @@ public class EpitechNewProjectWizard implements LanguageGeneratorNewProjectWizar
     @NotNull
     @Override
     public Icon getIcon() {
-        return Icons.EpitechLogo.EpitechIcon_150x150;
+        return EpitechUtilsIcons.EpitechIcon_150x150;
     }
 
     @NotNull

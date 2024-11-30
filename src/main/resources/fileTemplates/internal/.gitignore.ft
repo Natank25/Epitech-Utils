@@ -1,0 +1,13 @@
+*.log
+*.a
+*.out
+*.o
+*.so
+*.gcno
+*.gcda
+unit_tests
+*~
+*#
+.idea
+.gitignore
+${BIN_NAME}

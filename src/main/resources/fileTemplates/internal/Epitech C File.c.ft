@@ -4,8 +4,6 @@
 #set($lib = "")
 #foreach($lib in $libs_arr)
     #if($lib != "")
-    #[[#include]]# "$lib"
+    #[[#include]]# "${lib}.h"
     #end
 #end
-
-${Main_Function}()

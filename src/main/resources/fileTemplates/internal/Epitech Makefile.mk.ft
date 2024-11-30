@@ -17,37 +17,42 @@ TESTS_SRC = $(shell find ./tests -type f -name *.c)
 
 TESTS_OBJ = $(TESTS_SRC:.c=.o)
 
-NAME = ${BIN_NAME}
-
 CPPFLAGS = -iquote ./include/
 
 CFLAGS = -Wall -Wextra
 
+LDLIBS = ${LIBS}
+
+LDFLAGS = -L./lib/
+
+NAME = ${BIN_NAME}
+
 all: $(NAME)
 
 $(NAME): $(COMMON_OBJ) $(OBJ) $(TESTS_OBJ)
-	$(CC) $(COMMON_OBJ) $(OBJ) -o $(NAME)
+	$(CC) $(COMMON_OBJ) $(OBJ) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 
 dev:	fclean
-	$(CC) -g3 $(CPPFLAGS) $(COMMON_SRC) $(SRC) -o $(NAME)
+	$(CC) -g3 $(CPPFLAGS) $(COMMON_SRC) $(SRC) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 
 sanity-dev:	fclean
-	$(CC) -g3 -fsanitize=address $(CPPFLAGS) $(COMMON_SRC) $(SRC) -o $(NAME)
+	$(CC) -g3 -fsanitize=address $(CPPFLAGS) $(COMMON_SRC) $(SRC) -o $(NAME) \
+	$(LDFLAGS) $(LDLIBS)
 
 clean:
-	rm -f $(COMMON_OBJ) $(OBJ) $(TESTS_OBJ)
+	$(RM) $(COMMON_OBJ) $(OBJ) $(TESTS_OBJ) $(LDFLAGS) $(LDLIBS)
 
 fclean:	clean
-	rm -f $(NAME)
-	rm -f unit_tests
+	$(RM) $(NAME)
+	$(RM) unit_tests
 
 re:	fclean all
 
 unit_tests: fclean
 	$(CC) -g3 $(CPPFLAGS) $(CFLAGS) $(COMMON_SRC) $(TESTS_SRC) --coverage \
-	-lcriterion -o unit_tests
+	-lcriterion -o unit_tests $(LDFLAGS) $(LDLIBS)
 
 tests_run: unit_tests
 	./unit_tests
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re dev sanity-dev unit_tests tests_run $(NAME)

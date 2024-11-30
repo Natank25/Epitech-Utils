@@ -3,24 +3,29 @@
     <id>com.github.natank25.epitechutils</id>
     <name>Epitech-Utils</name>
     <vendor>Natank25</vendor>
-    <description><![CDATA[
+    <description>
         Plugin made by an Epitech's student for Epitech's students.
         It allows you to create a project with a Makefile, default folders and files and run configurations.
 
         In the future, I plan to:
         - Create an action to convert an already existing project into a lib
-    ]]></description>
+    </description>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.clion</depends>
     <depends>com.intellij.modules.clion</depends>
     <depends>com.intellij.clion-makefile</depends>
     <depends>name.kropp.intellij.makefile</depends>
+    <depends>Git4Idea</depends>
+    <depends>org.jetbrains.plugins.github</depends>
 
     <actions>
         <action id="io.github.natank25.epitechutils.actions.EpitechNewFileAction"
-                class="io.github.natank25.epitechutils.actions.EpitechNewFileAction" text="EpitechNewFileAction"
-                description="Creates a new file for Epitech Projects"/>
+                class="io.github.natank25.epitechutils.actions.EpitechNewFileAction" text="Epitech File"
+                icon="io.github.natank25.epitechutils.icons.EpitechUtilsIcons.EpitechIcon_150x150"
+                description="Creates a new file for Epitech Projects">
+            <add-to-group group-id="NewGroup"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -31,7 +36,11 @@
         <projectConfigurable parentId="language"
                              instance="io.github.natank25.epitechutils.module.EpitechConfigurable"
                              id="io.github.natank25.epitechutils.module.EpitechConfigurable"
-                             displayName="Epitech"/>
+                             displayName="Epitech"
+                             nonDefaultProject="true"
+        />
         <notificationGroup displayType="BALLOON" id="EpitechUtils"/>
+        <checkinHandlerFactory
+                implementation="io.github.natank25.epitechutils.chekinhandler.CodingStyleCheckinHandlerFactory"/>
     </extensions>
 </idea-plugin>

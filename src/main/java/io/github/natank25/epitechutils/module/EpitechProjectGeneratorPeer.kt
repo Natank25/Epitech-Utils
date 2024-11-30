@@ -7,7 +7,9 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.ProjectGeneratorPeer
+import com.intellij.ui.dsl.builder.COLUMNS_LARGE
 import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.columns
 import com.intellij.ui.dsl.builder.panel
 import javax.swing.JComponent
 import javax.swing.JTextField
@@ -20,6 +22,11 @@ class EpitechProjectGeneratorPeer : ProjectGeneratorPeer<EpitechProjectSettings>
     override fun getComponent(myLocationField: TextFieldWithBrowseButton, checkValid: Runnable): JComponent {
         this.checkValid = checkValid;
         panel = panel {
+            row("Github url:") {
+                textField()
+                    .bindText(settings::gitRepo)
+                    .columns(COLUMNS_LARGE)
+            }
             row("Binary Name :"){
                 textField()
                     .bindText(settings::binName)
