@@ -1,5 +1,6 @@
 package io.github.natank25.epitechutils.files;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.project.Project;
@@ -8,16 +9,10 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.cidr.cpp.makefile.MakefileUtil;
-import com.jetbrains.cidr.cpp.makefile.actions.MakefileRefreshProjectAction;
-import com.jetbrains.cidr.cpp.makefile.project.MakefileAutoImportAware;
-import com.jetbrains.cidr.cpp.makefile.settings.MakefileProjectSettings;
-import com.jetbrains.cidr.cpp.makefile.settings.MakefileSettings;
 import io.github.natank25.epitechutils.actions.EpitechNewFileAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.Properties;
 
 public class EpitechTemplates {
@@ -25,14 +20,17 @@ public class EpitechTemplates {
 	public static final String HEADER_FILE = "Epitech Header File.h";
 	public static final String MAKEFILE = "Epitech Makefile.mk";
 	public static final String GITIGNORE = ".gitignore";
+	public static final String C_TEST_FILE = "Epitech C Test File.c";
 	
 	public static @NotNull PsiElement createFromTemplate(Project project, String fileName, PsiDirectory dir, Templates template, @Nullable Properties properties){
 		Properties defaultProperties = EpitechNewFileAction.createProperties(project, fileName);
 		if (properties != null)
 			defaultProperties.putAll(properties);
 		try {
+			FileTemplate internalTemplate = FileTemplateManager.getInstance(project).getInternalTemplate(template.toString());
+			internalTemplate.setLiveTemplateEnabled(true);
 			return FileTemplateUtil.createFromTemplate(
-					FileTemplateManager.getInstance(project).getInternalTemplate(template.toString()),
+					internalTemplate,
 					fileName,
 					properties,
 					dir);
@@ -51,6 +49,10 @@ public class EpitechTemplates {
 	
 	public static @NotNull PsiElement createCFileFromTemplate(Project project, String fileName, VirtualFile dir){
 		return createFromTemplate(project, fileName, PsiManager.getInstance(project).findDirectory(dir), Templates.C_FILE);
+	}
+	
+	public static @NotNull PsiElement createCFileFromTemplate(Project project, String fileName, VirtualFile dir, Properties properties){
+		return createFromTemplate(project, fileName, PsiManager.getInstance(project).findDirectory(dir), Templates.C_FILE, properties);
 	}
 	
 	public static @NotNull PsiElement createHeaderFileFromTemplate(Project project, String fileName, VirtualFile dir){
@@ -75,7 +77,8 @@ public class EpitechTemplates {
 		C_FILE(EpitechTemplates.C_FILE),
 		HEADER_FILE(EpitechTemplates.HEADER_FILE),
 		MAKEFILE(EpitechTemplates.MAKEFILE),
-		GITIGNORE(EpitechTemplates.GITIGNORE);
+		GITIGNORE(EpitechTemplates.GITIGNORE),
+		C_TEST_FILE(EpitechTemplates.C_TEST_FILE);
 		
 		private final String filename;
 		

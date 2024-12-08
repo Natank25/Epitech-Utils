@@ -3,16 +3,10 @@
     <id>com.github.natank25.epitechutils</id>
     <name>Epitech-Utils</name>
     <vendor>Natank25</vendor>
-    <description>
-        Plugin made by an Epitech's student for Epitech's students.
-        It allows you to create a project with a Makefile, default folders and files and run configurations.
-
-        In the future, I plan to:
-        - Create an action to convert an already existing project into a lib
-    </description>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.clion</depends>
+    <depends>com.intellij.cidr.base</depends>
     <depends>com.intellij.modules.clion</depends>
     <depends>com.intellij.clion-makefile</depends>
     <depends>name.kropp.intellij.makefile</depends>
@@ -42,5 +36,8 @@
         <notificationGroup displayType="BALLOON" id="EpitechUtils"/>
         <checkinHandlerFactory
                 implementation="io.github.natank25.epitechutils.chekinhandler.CodingStyleCheckinHandlerFactory"/>
+        <toolWindow factoryClass="io.github.natank25.epitechutils.codingStyleWindow.CodingStyleToolWindowFactory"
+                    id="CodingStyleWindow" secondary="true"  anchor="right"
+                    icon="io.github.natank25.epitechutils.icons.EpitechUtilsIcons.EpitechIcon_150x150"/>
     </extensions>
 </idea-plugin>

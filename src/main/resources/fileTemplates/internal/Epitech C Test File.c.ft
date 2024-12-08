@@ -1,0 +1,8 @@
+#parse("Epitech Header.h")
+
+#[[#include <criterion/criterion.h>]]#
+
+Test(suite_name, ${FILE_NAME})
+{
+
+}

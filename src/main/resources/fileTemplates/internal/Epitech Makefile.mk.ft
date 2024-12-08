@@ -5,54 +5,63 @@
 #[[##]]# ${FILE_NAME}
 #[[##]]#
 
-COMMON_SRC = $(shell find ./src -not -name "main.c" -type f -name *.c)
-
-COMMON_OBJ = $(COMMON_SRC:.c=.o)
-
-SRC = src/main.c
+SRC = src/${BIN_NAME}.c
 
 OBJ = $(SRC:.c=.o)
 
-TESTS_SRC = $(shell find ./tests -type f -name *.c)
+MAIN = src/main.c
+
+TESTS_SRC =
 
 TESTS_OBJ = $(TESTS_SRC:.c=.o)
 
-CPPFLAGS = -iquote ./include/
+CPPFLAGS += -iquote ./include/
 
-CFLAGS = -Wall -Wextra
+CFLAGS += -Wall -Wextra
 
-LDLIBS = ${LIBS}
+#[[##]]# LDLIBS += ${LIBS}
 
-LDFLAGS = -L./lib/
+LDFLAGS += -L./lib/
 
 NAME = ${BIN_NAME}
 
+DEBUG_FLAGS = -g3
+
+UNIT_TESTS_FLAGS = --coverage -lcriterion
+
 all: $(NAME)
 
-$(NAME): $(COMMON_OBJ) $(OBJ) $(TESTS_OBJ)
-	$(CC) $(COMMON_OBJ) $(OBJ) -o $(NAME) $(LDFLAGS) $(LDLIBS)
+$(NAME): $(OBJ) $(MAIN:.c=.o)
+	$(CC) $(OBJ) $(MAIN:.c=.o) -o $(NAME) $(LDFLAGS) $(LDLIBS)
 
-dev:	fclean
-	$(CC) -g3 $(CPPFLAGS) $(COMMON_SRC) $(SRC) -o $(NAME) $(LDFLAGS) $(LDLIBS)
-
-sanity-dev:	fclean
-	$(CC) -g3 -fsanitize=address $(CPPFLAGS) $(COMMON_SRC) $(SRC) -o $(NAME) \
+dev:
+	$(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(SRC) $(MAIN) -o $(NAME) \
 	$(LDFLAGS) $(LDLIBS)
 
+sanitizer-dev: DEBUG_FLAGS += -fsanitize=address
+sanitizer-dev: dev
+
 clean:
-	$(RM) $(COMMON_OBJ) $(OBJ) $(TESTS_OBJ) $(LDFLAGS) $(LDLIBS)
+	@$(RM) $(OBJ) $($(MAIN:.c=.o)) $(TESTS_OBJ)
 
 fclean:	clean
-	$(RM) $(NAME)
-	$(RM) unit_tests
+	@$(RM) $(NAME)
+	@$(RM) unit_tests
 
 re:	fclean all
 
-unit_tests: fclean
-	$(CC) -g3 $(CPPFLAGS) $(CFLAGS) $(COMMON_SRC) $(TESTS_SRC) --coverage \
-	-lcriterion -o unit_tests $(LDFLAGS) $(LDLIBS)
+re_dev: fclean dev
+
+unit_tests:
+	$(CC) $(DEBUG_FLAGS) $(CPPFLAGS) $(CFLAGS) $(SRC) $(TESTS_SRC) \
+	$(UNIT_TESTS_FLAGS) -o unit_tests $(LDFLAGS) $(LDLIBS)
+
+sanitizer-unit_tests: DEBUG_FLAGS += -fsanitize=address
+sanitizer-unit_tests: unit_tests
 
 tests_run: unit_tests
 	./unit_tests
 
-.PHONY: all clean fclean re dev sanity-dev unit_tests tests_run $(NAME)
+
+.PHONY: all $(NAME) dev sanitizer-dev clean fclean re re_dev \
+	unit_tests sanitizer-unit_tests tests_run sanitizer_on
