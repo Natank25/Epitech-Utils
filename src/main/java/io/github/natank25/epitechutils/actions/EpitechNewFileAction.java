@@ -103,7 +103,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	@Override
 	protected void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory, CreateFileFromTemplateDialog.@NotNull Builder builder) {
 		builder.setTitle("Epitech File");
-		
+
 		String dirPathFromRoot = directory.getVirtualFile().getPath().replace(project.getBasePath(), "");
 		if (dirPathFromRoot.contains("tests")){
 			builder.addKind("C test file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_TEST_FILE, new InputValidator() {
