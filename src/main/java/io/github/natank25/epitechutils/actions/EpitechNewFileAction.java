@@ -103,7 +103,9 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	@Override
 	protected void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory, CreateFileFromTemplateDialog.@NotNull Builder builder) {
 		builder.setTitle("Epitech File");
-		if (directory.getName().equals("tests")){
+		
+		String dirPathFromRoot = directory.getVirtualFile().getPath().replace(project.getBasePath(), "");
+		if (dirPathFromRoot.contains("tests")){
 			builder.addKind("C test file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_TEST_FILE, new InputValidator() {
 				@Override
 				public boolean checkInput(@NlsSafe String s) {
@@ -118,7 +120,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 			builder.addKind("C file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_FILE);
 			builder.addKind("Header file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.HEADER_FILE);
 		}
-		if (directory.getName().equals("src")){
+		if (dirPathFromRoot.contains("src")){
 			builder.addKind("C file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_FILE);
 			builder.addKind("Header file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.HEADER_FILE);
 			builder.addKind("C test file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_TEST_FILE, new InputValidator() {
@@ -133,7 +135,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 				}
 			});
 		}
-		if (directory.getName().equals("include")){
+		if (dirPathFromRoot.contains("include")){
 			builder.addKind("Header file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.HEADER_FILE);
 			builder.addKind("C file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_FILE);
 			builder.addKind("C test file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_TEST_FILE, new InputValidator() {

@@ -3,6 +3,9 @@ package io.github.natank25.epitechutils.codingStyleWindow;
 import com.intellij.execution.ProgramRunnerUtil;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -24,6 +27,10 @@ import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAware {
 	@Override
@@ -60,6 +67,7 @@ public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAwar
 			contentPanel.add(createPanel(), BorderLayout.PAGE_START);
 			updateWindow.addActionListener(actionEvent -> updateView());
 			contentPanel.add(updateWindow);
+			result.setEditable(false);
 			contentPanel.add(result, BorderLayout.CENTER);
 		}
 		
@@ -78,15 +86,31 @@ public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAwar
 		private void generateReport() {
 			var dockerRunConfig = RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report");
 			if (dockerRunConfig == null) return;
+			result.setText("Generating report...");
+			try {
+				WriteAction.run(() -> {
+					if (getCodingStyleReport() != null)
+						getCodingStyleReport().delete(this);
+				});
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 			ProgramRunnerUtil.executeConfiguration(dockerRunConfig, DefaultRunExecutor.getRunExecutorInstance());
+			CodingStyleReportWatcher.waitForCodingStyleReport(project, this, this::updateView);
+		}
+		
+		private void updateReportView(){
+			System.out.println("UpdateReportView");
 			VfsUtil.findFile(Path.of(project.getBasePath()), true).refresh(false, true);
+			result.setText(readCodingStyleReport());
 		}
 		
 		@Nullable
 		private VirtualFile getCodingStyleReport() {
-			return FilenameIndex.getVirtualFilesByName(
+			System.out.println("GetReport");
+			return ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(
 					CODING_STYLE_REPORTS_LOG,
-					ProjectScope.getProjectScope(project)).stream().findFirst().orElse(null);
+					ProjectScope.getProjectScope(project)).stream().findFirst().orElse(null));
 		}
 		
 		private String readCodingStyleReport() {
@@ -106,7 +130,24 @@ public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAwar
 		}
 		
 		private void updateView() {
-			result.setText(readCodingStyleReport());
+			updateReportView();
+		}
+		
+		public static class CodingStyleReportWatcher {
+			public static void waitForCodingStyleReport(Project project, CodingStyleToolWindowContent window, Runnable on_run_config_ready) {
+				ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+				AtomicInteger count = new AtomicInteger();
+				executor.scheduleWithFixedDelay(() -> {
+					System.out.println(count.get() + " upd");
+					System.out.println(window.getCodingStyleReport() + " report exists");
+					if (count.get() >= 10 || window.getCodingStyleReport() != null) {
+						System.out.println("Found file");
+						executor.shutdown();
+						on_run_config_ready.run();
+					}
+					count.addAndGet(1);
+				}, 500, 200, TimeUnit.MILLISECONDS);
+			}
 		}
 	}
 }
