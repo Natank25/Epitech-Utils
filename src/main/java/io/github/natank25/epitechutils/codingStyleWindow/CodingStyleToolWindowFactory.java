@@ -17,6 +17,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.ProjectScope;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,7 @@ public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAwar
 		private final JButton generateReport = new JButton("Generate new Coding Style report");
 		private final JButton updateWindow = new JButton("Update current view");
 		private final JTextArea result = new JTextArea();
+		private final JBScrollPane scrollPane = new JBScrollPane(result, JBScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JBScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		private final Project project;
 		
 		public CodingStyleToolWindowContent(ToolWindow toolWindow, Project project) {
@@ -68,6 +70,8 @@ public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAwar
 			updateWindow.addActionListener(actionEvent -> updateView());
 			contentPanel.add(updateWindow);
 			result.setEditable(false);
+			result.setLineWrap(true);
+			contentPanel.add(scrollPane);
 			contentPanel.add(result, BorderLayout.CENTER);
 		}
 		
@@ -100,17 +104,14 @@ public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAwar
 		}
 		
 		private void updateReportView(){
-			System.out.println("UpdateReportView");
 			VfsUtil.findFile(Path.of(project.getBasePath()), true).refresh(false, true);
 			result.setText(readCodingStyleReport());
 		}
 		
 		@Nullable
 		private VirtualFile getCodingStyleReport() {
-			System.out.println("GetReport");
-			return ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(
-					CODING_STYLE_REPORTS_LOG,
-					ProjectScope.getProjectScope(project)).stream().findFirst().orElse(null));
+			VirtualFileManager.getInstance().asyncRefresh();
+			return ReadAction.compute(() -> VfsUtil.findFile(Path.of(project.getBasePath(), CODING_STYLE_REPORTS_LOG), false));
 		}
 		
 		private String readCodingStyleReport() {
@@ -139,14 +140,15 @@ public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAwar
 				AtomicInteger count = new AtomicInteger();
 				executor.scheduleWithFixedDelay(() -> {
 					System.out.println(count.get() + " upd");
-					System.out.println(window.getCodingStyleReport() + " report exists");
-					if (count.get() >= 10 || window.getCodingStyleReport() != null) {
+					VirtualFileManager.getInstance().asyncRefresh();
+					System.out.println(ReadAction.compute(() -> VfsUtil.findFile(Path.of(project.getBasePath(), CODING_STYLE_REPORTS_LOG), false)) + " report exists");
+					if (count.get() >= 15 || window.getCodingStyleReport() != null) {
 						System.out.println("Found file");
 						executor.shutdown();
 						on_run_config_ready.run();
 					}
 					count.addAndGet(1);
-				}, 500, 200, TimeUnit.MILLISECONDS);
+				}, 500, 500, TimeUnit.MILLISECONDS);
 			}
 		}
 	}
