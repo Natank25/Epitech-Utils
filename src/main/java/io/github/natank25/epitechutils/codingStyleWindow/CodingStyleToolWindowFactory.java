@@ -115,7 +115,7 @@ public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAwar
 		}
 		
 		private String readCodingStyleReport() {
-			return readFileContent(getCodingStyleReport());
+			return readFileContent(getCodingStyleReport()).replaceAll(".*MAJOR:C-O1\\n", "");
 		}
 		
 		private String readFileContent(@Nullable VirtualFile file) {
