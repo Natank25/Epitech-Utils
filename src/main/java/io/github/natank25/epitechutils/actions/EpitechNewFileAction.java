@@ -111,7 +111,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 				public boolean checkInput(@NlsSafe String s) {
 					return s.startsWith("tests_");
 				}
-				
+
 				@Override
 				public boolean canClose(@NlsSafe String s) {
 					return this.checkInput(s);
@@ -119,23 +119,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 			});
 			builder.addKind("C file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_FILE);
 			builder.addKind("Header file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.HEADER_FILE);
-		}
-		if (dirPathFromRoot.contains("src")){
-			builder.addKind("C file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_FILE);
-			builder.addKind("Header file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.HEADER_FILE);
-			builder.addKind("C test file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_TEST_FILE, new InputValidator() {
-				@Override
-				public boolean checkInput(@NlsSafe String s) {
-					return s.startsWith("tests_");
-				}
-				
-				@Override
-				public boolean canClose(@NlsSafe String s) {
-					return this.checkInput(s);
-				}
-			});
-		}
-		if (dirPathFromRoot.contains("include")){
+		} else if (dirPathFromRoot.contains("include")){
 			builder.addKind("Header file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.HEADER_FILE);
 			builder.addKind("C file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_FILE);
 			builder.addKind("C test file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_TEST_FILE, new InputValidator() {
@@ -149,6 +133,21 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 					return this.checkInput(s);
 				}
 			});
+		} else {
+			builder.addKind("C file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_FILE);
+			builder.addKind("Header file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.HEADER_FILE);
+			builder.addKind("C test file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_TEST_FILE, new InputValidator() {
+				@Override
+				public boolean checkInput(@NlsSafe String s) {
+					return s.startsWith("tests_");
+				}
+
+				@Override
+				public boolean canClose(@NlsSafe String s) {
+					return this.checkInput(s);
+				}
+			});
+
 		}
 		builder.addKind("Makefile", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.MAKEFILE);
 		builder.addKind("Gitignore", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.GITIGNORE);
