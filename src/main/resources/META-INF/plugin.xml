@@ -37,7 +37,7 @@
         <checkinHandlerFactory
                 implementation="io.github.natank25.epitechutils.chekinhandler.CodingStyleCheckinHandlerFactory"/>
         <toolWindow factoryClass="io.github.natank25.epitechutils.codingStyleWindow.CodingStyleToolWindowFactory"
-                    id="CodingStyleWindow" secondary="true"  anchor="right"
+                    id="Coding Style Report" secondary="true"  anchor="right"
                     icon="io.github.natank25.epitechutils.icons.EpitechUtilsIcons.EpitechIcon_150x150"/>
     </extensions>
 </idea-plugin>

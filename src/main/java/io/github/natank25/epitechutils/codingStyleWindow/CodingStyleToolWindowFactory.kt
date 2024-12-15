@@ -1,155 +1,177 @@
-package io.github.natank25.epitechutils.codingStyleWindow;
+package io.github.natank25.epitechutils.codingStyleWindow
 
-import com.intellij.execution.ProgramRunnerUtil;
-import com.intellij.execution.RunManager;
-import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.execution.ProgramRunnerUtil
+import com.intellij.execution.RunManager
+import com.intellij.execution.executors.DefaultRunExecutor
+import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.ui.components.JBTabbedPane
+import com.intellij.ui.content.ContentFactory
+import com.intellij.ui.dsl.builder.TopGap
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.util.ThrowableRunnable
+import com.jetbrains.rd.swing.mouseClicked
+import java.awt.Dimension
+import java.io.IOException
+import java.nio.file.Path
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JTextArea
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
+    override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        val toolWindowContent = CodingStyleToolWindowContent(project)
+        val content = ContentFactory.getInstance().createContent(toolWindowContent.contentPanel, "", false)
+        toolWindow.contentManager.addContent(content)
+    }
 
-public class CodingStyleToolWindowFactory implements ToolWindowFactory, DumbAware {
-	@Override
-	public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-		CodingStyleToolWindowContent toolWindowContent = new CodingStyleToolWindowContent(toolWindow, project);
-		Content content = ContentFactory.getInstance().createContent(toolWindowContent.getContentPanel(), "", false);
-		toolWindow.getContentManager().addContent(content);
-	}
-	
-	private static class CodingStyleToolWindowContent {
-		
-		
-		public static final String CODING_STYLE_REPORTS_LOG = "coding-style-reports.log";
-		private final JPanel contentPanel = new JPanel();
-		private final JButton generateReport = new JButton("Generate new Coding Style report");
-		private final JButton updateWindow = new JButton("Update current view");
-		private final JTextArea result = new JTextArea();
-		private final JBScrollPane scrollPane = new JBScrollPane(result, JBScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JBScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		private final Project project;
-		
-		public CodingStyleToolWindowContent(ToolWindow toolWindow, Project project) {
-			project.getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
-				@Override
-				public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
-					VFileEvent event = events.stream().filter(vFileEvent -> vFileEvent.getFile().getName().equals(CODING_STYLE_REPORTS_LOG)).findFirst().orElse(null);
-					if (event == null || !event.getFile().exists())
-						return;
-					updateView();
-					BulkFileListener.super.after(events);
-				}
-			});
-			this.project = project;
-			contentPanel.setLayout(new BorderLayout(0, 20));
-			contentPanel.setBorder(BorderFactory.createEmptyBorder(40, 0, 0, 0));
-			contentPanel.add(createPanel(), BorderLayout.PAGE_START);
-			updateWindow.addActionListener(actionEvent -> updateView());
-			contentPanel.add(updateWindow);
-			result.setEditable(false);
-			result.setLineWrap(true);
-			contentPanel.add(scrollPane);
-			contentPanel.add(result, BorderLayout.CENTER);
-		}
-		
-		public JPanel getContentPanel() {
-			return contentPanel;
-		}
-		
-		@NotNull
-		private JPanel createPanel() {
-			JPanel reportPanel = new JPanel();
-			generateReport.addActionListener(actionEvent -> generateReport());
-			reportPanel.add(generateReport);
-			return reportPanel;
-		}
-		
-		private void generateReport() {
-			var dockerRunConfig = RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report");
-			if (dockerRunConfig == null) return;
-			result.setText("Generating report...");
-			try {
-				WriteAction.run(() -> {
-					if (getCodingStyleReport() != null)
-						getCodingStyleReport().delete(this);
-				});
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			ProgramRunnerUtil.executeConfiguration(dockerRunConfig, DefaultRunExecutor.getRunExecutorInstance());
-			CodingStyleReportWatcher.waitForCodingStyleReport(project, this, this::updateView);
-		}
-		
-		private void updateReportView(){
-			VfsUtil.findFile(Path.of(project.getBasePath()), true).refresh(false, true);
-			result.setText(readCodingStyleReport());
-		}
-		
-		@Nullable
-		private VirtualFile getCodingStyleReport() {
-			VirtualFileManager.getInstance().asyncRefresh();
-			return ReadAction.compute(() -> VfsUtil.findFile(Path.of(project.getBasePath(), CODING_STYLE_REPORTS_LOG), false));
-		}
-		
-		private String readCodingStyleReport() {
-			return readFileContent(getCodingStyleReport()).replaceAll(".*MAJOR:C-O1\\n", "");
-		}
-		
-		private String readFileContent(@Nullable VirtualFile file) {
-			if (file != null && file.exists()) {
-				try {
-					return "Result:\n" + new String(file.contentsToByteArray());
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			} else {
-				return "File not found or is not readable";
-			}
-		}
-		
-		private void updateView() {
-			updateReportView();
-		}
-		
-		public static class CodingStyleReportWatcher {
-			public static void waitForCodingStyleReport(Project project, CodingStyleToolWindowContent window, Runnable on_run_config_ready) {
-				ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-				AtomicInteger count = new AtomicInteger();
-				executor.scheduleWithFixedDelay(() -> {
-					System.out.println(count.get() + " upd");
-					VirtualFileManager.getInstance().asyncRefresh();
-					System.out.println(ReadAction.compute(() -> VfsUtil.findFile(Path.of(project.getBasePath(), CODING_STYLE_REPORTS_LOG), false)) + " report exists");
-					if (count.get() >= 15 || window.getCodingStyleReport() != null) {
-						System.out.println("Found file");
-						executor.shutdown();
-						on_run_config_ready.run();
-					}
-					count.addAndGet(1);
-				}, 500, 500, TimeUnit.MILLISECONDS);
-			}
-		}
-	}
+    private class CodingStyleToolWindowContent(private val project: Project) {
+        var ErrorList: List<CodingStyleError> = ArrayList()
+        val tabbedPane: JBTabbedPane = JBTabbedPane()
+        val errorWindowList: List<ErrorListWindow> = listOf(
+            ErrorListWindow(ErrorListType.FATAL),
+            ErrorListWindow(ErrorListType.MAJOR),
+            ErrorListWindow(ErrorListType.MINOR),
+            ErrorListWindow(ErrorListType.INFO),
+            ErrorListWindow(ErrorListType.HIDDEN)
+        )
+        val contentPanel: JPanel = panel {
+            row {
+                button("Generate New Coding Style Report") {
+                    generateReport()
+                }
+            }.topGap(TopGap.MEDIUM)
+
+            row {
+                cell(tabbedPane)
+            }
+        }
+
+        init {
+            tabbedPane.minimumSize = Dimension(400, 300)
+            tabbedPane.preferredSize = Dimension(800, 600)
+            for (window in errorWindowList) {
+                tabbedPane.add(window.severity.string, window)
+            }
+            tabbedPane.isVisible = false
+            project.messageBus.connect().subscribe(
+                VirtualFileManager.VFS_CHANGES,
+                object : BulkFileListener {
+                    override fun after(events: List<VFileEvent>) {
+                        events.filter { it.file?.name.equals(CODING_STYLE_REPORTS_LOG) }
+                            .forEach { event -> updateReportView(event) }
+                    }
+                }
+            )
+
+        }
+
+        fun generateReport() {
+            val dockerRunConfig =
+                RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report")
+            if (dockerRunConfig == null) return
+            try {
+                WriteAction.run<IOException?>(ThrowableRunnable {
+                    if (this.codingStyleReport != null) this.codingStyleReport?.delete(this)
+                })
+            } catch (e: IOException) {
+                throw RuntimeException(e)
+            }
+            ProgramRunnerUtil.executeConfiguration(dockerRunConfig, DefaultRunExecutor.getRunExecutorInstance())
+        }
+
+        fun updateReportView(event: VFileEvent) {
+            val file = event.file!!
+            tabbedPane.isVisible = file.exists()
+            if (!file.exists())
+                return
+            updateErrorList(file)
+
+            errorWindowList.forEach { errorWindow -> errorWindow.updateList(ErrorList) }
+        }
+
+        private fun updateErrorListWindow() {
+
+        }
+
+        private fun updateErrorList(file: VirtualFile) {
+            var reportResult: String
+            try {
+                reportResult = String(file.contentsToByteArray())
+            } catch (e: IOException) {
+                throw RuntimeException(e)
+            }
+            ErrorList = generateErrorList(reportResult)
+        }
+
+        private fun generateErrorList(string: String): List<CodingStyleError> {
+            val list: ArrayList<CodingStyleError> = ArrayList()
+
+            string.split("\n").forEach { errorLine ->
+                if (!errorLine.isBlank()) list.add(CodingStyleError.createErrorFromLine(errorLine))
+            }
+            return list
+        }
+
+        val codingStyleReport: VirtualFile?
+            get() {
+                VirtualFileManager.getInstance().asyncRefresh()
+                return ReadAction.compute<VirtualFile?, RuntimeException?>(
+                    ThrowableComputable {
+                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        VfsUtil.findFile(Path.of(project.basePath, CODING_STYLE_REPORTS_LOG), false)
+                    })
+            }
+
+        companion object {
+            const val CODING_STYLE_REPORTS_LOG: String = "coding-style-reports.log"
+        }
+    }
+
+
+    private class ErrorListWindow(val severity: ErrorListType) : JTextArea() {
+        var errorList : List<CodingStyleError> = emptyList()
+
+
+        fun updateList(fullErrorList: List<CodingStyleError>){
+            errorList = fullErrorList.filter { error ->
+                if (hiddenErrorCode.contains(error.errorCode)){
+                    this.severity == ErrorListType.HIDDEN
+                }else
+                    this.severity.string == error.severity.string
+            }
+            this.text = ""
+            for (error in errorList) {
+                this.text += error.fullLine + (if (error.comment != null) (": " + error.comment) else "") + "\n"
+            }
+        }
+
+        init {
+            this.isEditable = false
+            this.isFocusable = false
+            this.lineWrap = true
+        }
+
+        companion object {
+            val hiddenErrorCode: List<String> = listOf("C-O1")
+        }
+    }
+
+    private enum class ErrorListType(val string: String) {
+        FATAL("FATAL"),
+        MAJOR("MAJOR"),
+        MINOR("MINOR"),
+        INFO("INFO"),
+        HIDDEN("HIDDEN")
+    }
 }
