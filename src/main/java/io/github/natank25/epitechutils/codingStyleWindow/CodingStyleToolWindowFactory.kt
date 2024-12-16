@@ -15,17 +15,18 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.dsl.builder.TopGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ThrowableRunnable
-import com.jetbrains.rd.swing.mouseClicked
+import kotlinx.coroutines.withTimeoutOrNull
 import java.awt.Dimension
 import java.io.IOException
 import java.nio.file.Path
-import javax.swing.JLabel
 import javax.swing.JPanel
+import javax.swing.JScrollPane
 import javax.swing.JTextArea
 
 class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
@@ -97,7 +98,10 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
                 return
             updateErrorList(file)
 
-            errorWindowList.forEach { errorWindow -> errorWindow.updateList(ErrorList) }
+            for ((index, window) in errorWindowList.withIndex()) {
+                window.updateList(ErrorList)
+                tabbedPane.setTitleAt(index, window.getTitle())
+            }
         }
 
         private fun updateErrorListWindow() {
@@ -141,6 +145,8 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
 
     private class ErrorListWindow(val severity: ErrorListType) : JTextArea() {
         var errorList : List<CodingStyleError> = emptyList()
+        fun getTitle() : (String) {return severity.string + " (" + errorList.size + ")"}
+        val scrollBar : JBScrollPane = JBScrollPane(this, JBScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JBScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 
         fun updateList(fullErrorList: List<CodingStyleError>){
@@ -152,7 +158,7 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
             }
             this.text = ""
             for (error in errorList) {
-                this.text += error.fullLine + (if (error.comment != null) (": " + error.comment) else "") + "\n"
+                this.text += error.fullLine + (if (error.comment != null) (": " + error.comment) else "") + "\n\n"
             }
         }
 

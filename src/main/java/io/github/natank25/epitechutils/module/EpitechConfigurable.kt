@@ -29,6 +29,11 @@ class EpitechConfigurable internal constructor(private val project: Project) : B
             row("Project name :"){
                 textField().bindText(settings::PROJECT_NAME)
             }
+            row {
+                button("Add Coding Style Run Configuration") {
+                    EpitechDirectoryProjectGenerator.createCodingStyleRunConfiguration(project);
+                }
+            }
         }
     }
 

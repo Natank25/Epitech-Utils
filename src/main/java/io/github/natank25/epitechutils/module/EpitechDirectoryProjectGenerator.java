@@ -16,7 +16,6 @@ import com.intellij.openapi.GitRepositoryInitializer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
@@ -39,7 +38,6 @@ import io.github.natank25.epitechutils.icons.EpitechUtilsIcons;
 import io.github.natank25.epitechutils.project.EpitechUtilsConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,10 +149,10 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 	public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull EpitechProjectSettings settings, @NotNull Module module) {
 		EpitechUtilsConfiguration configuration = getEpitechUtilsConfiguration(project, settings);
 		
-		create_files_and_folders(project, baseDir, configuration);
-		initialize_makefile(project, baseDir, configuration);
+		createFilesAndFolders(project, baseDir, configuration);
+		initializeMakefile(project, baseDir, configuration);
 		initialize_vcs(project, baseDir, settings);
-		create_coding_style_run_configuration(project);
+		createCodingStyleRunConfiguration(project);
 	}
 	
 	@Override
@@ -167,7 +165,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 		return "Epitech project";
 	}
 	
-	private ShRunConfiguration createDeleteReportsRunConfiguration(@NotNull Project project) {
+	private static ShRunConfiguration createDeleteReportsRunConfiguration(@NotNull Project project) {
 		ShRunConfiguration templateConfiguration = (ShRunConfiguration) ShConfigurationType.getInstance().createTemplateConfiguration(project);
 		templateConfiguration.setExecuteScriptFile(false);
 		templateConfiguration.setExecuteInTerminal(false);
@@ -187,7 +185,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 		
 	}
 	
-	private void create_coding_style_run_configuration(@NotNull Project project) {
+	public static void createCodingStyleRunConfiguration(@NotNull Project project) {
 		RunManager runManager = RunManager.getInstance(project);
 		RunConfiguration shRunConfiguration = createDeleteReportsRunConfiguration(project);
 		RunnerAndConfigurationSettings dockerRunConfiguration = createDockerRunConfiguration(project);
@@ -201,7 +199,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 		runManager.getConfigurationsList(dockerRunConfiguration.getType()).forEach(runConfiguration -> runConfiguration.setBeforeRunTasks(new ArrayList<>(Collections.singletonList(task))));
 	}
 	
-	private void create_files_and_folders(@NotNull Project project, @NotNull VirtualFile baseDir, EpitechUtilsConfiguration configuration) {
+	private void createFilesAndFolders(@NotNull Project project, @NotNull VirtualFile baseDir, EpitechUtilsConfiguration configuration) {
 		ApplicationManager.getApplication().runWriteAction(() ->
 		{
 			createIncludeDirectory(project, baseDir);
@@ -213,9 +211,9 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 		});
 	}
 	
-	private void initialize_makefile(@NotNull Project project, @NotNull VirtualFile baseDir, EpitechUtilsConfiguration configuration) {
+	private void initializeMakefile(@NotNull Project project, @NotNull VirtualFile baseDir, EpitechUtilsConfiguration configuration) {
 		MakefileUtil.linkMakefileProject(project, baseDir, (mkBuildSystemDetector, project1) -> null);
-		RunConfigWatcher.waitForRunConfigurations(project, () -> setExecutableInRunConfiguration(project, configuration.BINARY_NAME));
+		// RunConfigWatcher.waitForRunConfigurations(project, () -> setExecutableInRunConfiguration(project, configuration.BINARY_NAME));
 	}
 	
 	private void setExecutableInRunConfiguration(Project project, String binary_name) {

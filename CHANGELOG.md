@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New file template for unit tests.
 - Shows most relevant file template first when creating a new file.
 - Now shows the content of the coding style report in a tool window.
+- In the plugin's settings a new button is there to create the docker run configuration
 
 ## [0.0.3] - 2024-12-01
 
