@@ -32,7 +32,7 @@ public class EpitechTemplates {
 			return FileTemplateUtil.createFromTemplate(
 					internalTemplate,
 					fileName,
-					properties,
+					defaultProperties,
 					dir);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
