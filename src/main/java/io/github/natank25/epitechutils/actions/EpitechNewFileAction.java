@@ -24,6 +24,7 @@ import com.jetbrains.lang.makefile.MakefileFile;
 import com.jetbrains.lang.makefile.psi.MakefileVariableAssignment;
 import io.github.natank25.epitechutils.files.EpitechTemplates;
 import io.github.natank25.epitechutils.icons.EpitechUtilsIcons;
+import io.github.natank25.epitechutils.project.EpitechUtilsConfiguration;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,7 +97,9 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	
 	public static Properties createProperties(Project project, String filename) {
 		Properties properties = FileTemplateManager.getInstance(project).getDefaultProperties();
-		properties.setProperty("FILE_NAME", filename);
+		System.out.println(properties);
+		properties.setProperty("EPITECH_PROJECT_NAME", EpitechUtilsConfiguration.getInstance(project).PROJECT_NAME);
+		System.out.println(properties);
 		return properties;
 	}
 	

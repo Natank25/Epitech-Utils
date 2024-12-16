@@ -61,6 +61,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 	private static @NotNull EpitechUtilsConfiguration getEpitechUtilsConfiguration(@NotNull Project project, @NotNull EpitechProjectSettings settings) {
 		EpitechUtilsConfiguration configuration = EpitechUtilsConfiguration.getInstance(project);
 		configuration.BINARY_NAME = settings.getBinName();
+		configuration.PROJECT_NAME = settings.getProjectName();
 		return configuration;
 	}
 	

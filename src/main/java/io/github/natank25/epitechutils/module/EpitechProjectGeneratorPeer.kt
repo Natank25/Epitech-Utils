@@ -34,6 +34,13 @@ class EpitechProjectGeneratorPeer : ProjectGeneratorPeer<EpitechProjectSettings>
                         checkValid()
                     }
             }
+            row("Project Name :"){
+                textField()
+                    .bindText(settings::projectName)
+                    .onChanged {
+                        checkValid()
+                    }
+            }
         }
         checkValid()
         return panel

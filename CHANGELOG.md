@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Made the Makefile in the file template prettier.
-- Creates a default function when creating a C file.
+- Now the header uses the project name saved in the plugin's settings which are accessible under <b>File | Settings | Languages & Frameworks | Epitech</b> or when creating a new Epitech project
 
 ### Added
 - When creating a new Epitech Project, now also create a docker run configuration that generates the report for the Epitech Coding Style.
