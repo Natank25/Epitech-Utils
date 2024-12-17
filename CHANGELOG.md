@@ -8,14 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Made the Makefile in the file template prettier.
-- Now the header uses the project name saved in the plugin's settings which are accessible under <b>File | Settings | Languages & Frameworks | Epitech</b> or when creating a new Epitech project
+- Now the header uses the project name saved in the plugin's settings which are accessible under <b>File | Settings | Languages & Frameworks | Epitech</b> or when creating a new Epitech project.
 
 ### Added
 - When creating a new Epitech Project, now also create a docker run configuration that generates the report for the Epitech Coding Style.
 - New file template for unit tests.
 - Shows most relevant file template first when creating a new file.
 - Now shows the content of the coding style report in a tool window.
-- In the plugin's settings a new button is there to create the docker run configuration
+- In the plugin's settings a new button is there to create the docker run configuration.
+- When commiting to the VCS, now asks you if you want to verify the coding style before the commit.
 
 ## [0.0.3] - 2024-12-01
 
