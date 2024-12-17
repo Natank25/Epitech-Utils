@@ -166,12 +166,15 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 	}
 	
 	private static ShRunConfiguration createDeleteReportsRunConfiguration(@NotNull Project project) {
-		ShRunConfiguration templateConfiguration = (ShRunConfiguration) ShConfigurationType.getInstance().createTemplateConfiguration(project);
-		templateConfiguration.setExecuteScriptFile(false);
-		templateConfiguration.setExecuteInTerminal(false);
-		templateConfiguration.setName("Delete Coding Style Report Logs");
-		templateConfiguration.setScriptText("rm -f coding-style-reports.log");
-		return templateConfiguration;
+		if (RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report") == null){
+			ShRunConfiguration templateConfiguration = (ShRunConfiguration) ShConfigurationType.getInstance().createTemplateConfiguration(project);
+			templateConfiguration.setExecuteScriptFile(false);
+			templateConfiguration.setExecuteInTerminal(false);
+			templateConfiguration.setName("Delete Coding Style Report Logs");
+			templateConfiguration.setScriptText("rm -f coding-style-reports.log");
+			return templateConfiguration;
+		}
+		return ((ShRunConfiguration) Objects.requireNonNull(RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report")).getConfiguration());
 	}
 	
 	private void createLibDirectory(@NotNull Project project, @NotNull VirtualFile baseDir) {

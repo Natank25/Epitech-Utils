@@ -21,10 +21,12 @@ import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.dsl.builder.TopGap
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.util.ThrowableRunnable
+import io.github.natank25.epitechutils.module.EpitechDirectoryProjectGenerator
 import kotlinx.coroutines.withTimeoutOrNull
 import java.awt.Dimension
 import java.io.IOException
 import java.nio.file.Path
+import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
@@ -39,6 +41,7 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
     private class CodingStyleToolWindowContent(private val project: Project) {
         var ErrorList: List<CodingStyleError> = ArrayList()
         val tabbedPane: JBTabbedPane = JBTabbedPane()
+        val refreshButton: JButton = JButton("Refresh")
         val errorWindowList: List<ErrorListWindow> = listOf(
             ErrorListWindow(ErrorListType.FATAL),
             ErrorListWindow(ErrorListType.MAJOR),
@@ -55,6 +58,7 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
 
             row {
                 cell(tabbedPane)
+                cell(refreshButton)
             }
         }
 
@@ -65,6 +69,10 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
                 tabbedPane.add(window.severity.string, window)
             }
             tabbedPane.isVisible = false
+            refreshButton.isVisible = true
+            refreshButton.addActionListener {
+                VirtualFileManager.getInstance().asyncRefresh()
+            }
             project.messageBus.connect().subscribe(
                 VirtualFileManager.VFS_CHANGES,
                 object : BulkFileListener {
@@ -78,8 +86,13 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
         }
 
         fun generateReport() {
-            val dockerRunConfig =
+            var dockerRunConfig =
                 RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report")
+            if (dockerRunConfig == null) {
+                EpitechDirectoryProjectGenerator.createCodingStyleRunConfiguration(project)
+                dockerRunConfig =
+                    RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report")
+            }
             if (dockerRunConfig == null) return
             try {
                 WriteAction.run<IOException?>(ThrowableRunnable {
@@ -94,6 +107,7 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
         fun updateReportView(event: VFileEvent) {
             val file = event.file!!
             tabbedPane.isVisible = file.exists()
+            refreshButton.isVisible = !tabbedPane.isVisible
             if (!file.exists())
                 return
             updateErrorList(file)
