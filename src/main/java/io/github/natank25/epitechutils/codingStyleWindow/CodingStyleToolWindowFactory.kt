@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -18,18 +17,20 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.content.ContentFactory
+import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.TopGap
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.util.ThrowableRunnable
+import com.intellij.ui.util.maximumHeight
 import io.github.natank25.epitechutils.module.EpitechDirectoryProjectGenerator
-import kotlinx.coroutines.withTimeoutOrNull
-import java.awt.Dimension
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.io.IOException
 import java.nio.file.Path
+import javax.swing.BorderFactory
 import javax.swing.JButton
 import javax.swing.JPanel
-import javax.swing.JScrollPane
 import javax.swing.JTextArea
+import javax.swing.border.Border
 
 class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
@@ -57,16 +58,14 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
             }.topGap(TopGap.MEDIUM)
 
             row {
-                cell(tabbedPane)
+                cell(tabbedPane).align(Align.FILL).resizableColumn()
                 cell(refreshButton)
-            }
+            }.resizableRow()
         }
 
         init {
-            tabbedPane.minimumSize = Dimension(400, 300)
-            tabbedPane.preferredSize = Dimension(800, 600)
             for (window in errorWindowList) {
-                tabbedPane.add(window.severity.string, window)
+                tabbedPane.add(window.severity.string, window.scrollPane)
             }
             tabbedPane.isVisible = false
             refreshButton.isVisible = true
@@ -95,9 +94,9 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
             }
             if (dockerRunConfig == null) return
             try {
-                WriteAction.run<IOException?>(ThrowableRunnable {
+                WriteAction.run<IOException?> {
                     if (this.codingStyleReport != null) this.codingStyleReport?.delete(this)
-                })
+                }
             } catch (e: IOException) {
                 throw RuntimeException(e)
             }
@@ -136,7 +135,7 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
             val list: ArrayList<CodingStyleError> = ArrayList()
 
             string.split("\n").forEach { errorLine ->
-                if (!errorLine.isBlank()) list.add(CodingStyleError.createErrorFromLine(errorLine))
+                if (errorLine.isNotBlank()) list.add(CodingStyleError.createErrorFromLine(errorLine))
             }
             return list
         }
@@ -144,11 +143,10 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
         val codingStyleReport: VirtualFile?
             get() {
                 VirtualFileManager.getInstance().asyncRefresh()
-                return ReadAction.compute<VirtualFile?, RuntimeException?>(
-                    ThrowableComputable {
-                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                        VfsUtil.findFile(Path.of(project.basePath, CODING_STYLE_REPORTS_LOG), false)
-                    })
+                return ReadAction.compute<VirtualFile?, RuntimeException?> {
+                    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                    VfsUtil.findFile(Path.of(project.basePath, CODING_STYLE_REPORTS_LOG), false)
+                }
             }
 
         companion object {
@@ -160,8 +158,8 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
     private class ErrorListWindow(val severity: ErrorListType) : JTextArea() {
         var errorList : List<CodingStyleError> = emptyList()
         fun getTitle() : (String) {return severity.string + " (" + errorList.size + ")"}
-        val scrollBar : JBScrollPane = JBScrollPane(this, JBScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JBScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
+        val scrollPane = JBScrollPane(this)
 
         fun updateList(fullErrorList: List<CodingStyleError>){
             errorList = fullErrorList.filter { error ->
@@ -180,6 +178,8 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
             this.isEditable = false
             this.isFocusable = false
             this.lineWrap = true
+            this.wrapStyleWord = true;
+            scrollPane.border = BorderFactory.createEmptyBorder()
         }
 
         companion object {
