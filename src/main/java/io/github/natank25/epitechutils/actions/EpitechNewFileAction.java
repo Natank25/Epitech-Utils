@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 public class EpitechNewFileAction extends CreateFileFromTemplateAction {
-	private static String getRelativePathFromProjectRoot(PsiFile psiFile, Project project) {
+	public static String getRelativePathFromProjectRoot(PsiFile psiFile, Project project) {
 		VirtualFile virtualFile = psiFile.getVirtualFile();
 		if (virtualFile == null) return null;
 		
@@ -97,9 +97,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	
 	public static Properties createProperties(Project project, String filename) {
 		Properties properties = FileTemplateManager.getInstance(project).getDefaultProperties();
-		System.out.println(properties);
 		properties.setProperty("EPITECH_PROJECT_NAME", EpitechUtilsConfiguration.getInstance(project).PROJECT_NAME);
-		System.out.println(properties);
 		return properties;
 	}
 	

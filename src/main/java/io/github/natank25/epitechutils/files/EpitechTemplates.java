@@ -21,6 +21,7 @@ public class EpitechTemplates {
 	public static final String MAKEFILE = "Epitech Makefile.mk";
 	public static final String GITIGNORE = ".gitignore";
 	public static final String C_TEST_FILE = "Epitech C Test File.c";
+	public static final String LIBRARY_MAKEFILE = "Library Makefile.mk";
 	
 	public static @NotNull PsiElement createFromTemplate(Project project, String fileName, PsiDirectory dir, Templates template, @Nullable Properties properties){
 		Properties defaultProperties = EpitechNewFileAction.createProperties(project, fileName);
@@ -73,19 +74,28 @@ public class EpitechTemplates {
 		return file;
 	}
 	
+	public static @NotNull PsiElement createLibraryMakefileFileFromTemplate(Project project, VirtualFile dir, String libraryName, String srcFiles){
+		Properties makefileProperties = new Properties();
+		makefileProperties.setProperty("LIB_NAME", libraryName);
+		makefileProperties.setProperty("SRC_FILES", srcFiles);
+		PsiElement file = createFromTemplate(project, "Makefile", PsiManager.getInstance(project).findDirectory(dir), Templates.LIBRARY_MAKEFILE, makefileProperties);
+		((PsiFile) file).setName("Makefile");
+		return file;
+	}
+	
 	public enum Templates{
 		C_FILE(EpitechTemplates.C_FILE),
 		HEADER_FILE(EpitechTemplates.HEADER_FILE),
 		MAKEFILE(EpitechTemplates.MAKEFILE),
 		GITIGNORE(EpitechTemplates.GITIGNORE),
-		C_TEST_FILE(EpitechTemplates.C_TEST_FILE);
+		C_TEST_FILE(EpitechTemplates.C_TEST_FILE),
+		LIBRARY_MAKEFILE(EpitechTemplates.LIBRARY_MAKEFILE);
 		
 		private final String filename;
 		
 		Templates(final String name){
 			this.filename = name;
 		}
-		
 		
 		@Override
 		public String toString() {

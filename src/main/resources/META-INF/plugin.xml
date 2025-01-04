@@ -12,6 +12,7 @@
     <depends>name.kropp.intellij.makefile</depends>
     <depends>Git4Idea</depends>
     <depends>org.jetbrains.plugins.github</depends>
+    <depends>com.intellij.nativeDebug</depends>
 
     <actions>
         <action id="io.github.natank25.epitechutils.actions.EpitechNewFileAction"
@@ -19,6 +20,10 @@
                 icon="io.github.natank25.epitechutils.icons.EpitechUtilsIcons.EpitechIcon_150x150"
                 description="Creates a new file for Epitech Projects">
             <add-to-group group-id="NewGroup"/>
+        </action>
+        <action id="BuildLibrary" class="io.github.natank25.epitechutils.actions.BuildLibrary"
+                text="Build Current Library" description="Builds the current library into build/{lib_name}/">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
 
