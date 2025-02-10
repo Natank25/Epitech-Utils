@@ -2,7 +2,7 @@
 
 #[[#include <criterion/criterion.h>]]#
 
-Test(suite_name, ${FILE_NAME})
+Test(${FILE_NAME}, test_name)
 {
 
 }

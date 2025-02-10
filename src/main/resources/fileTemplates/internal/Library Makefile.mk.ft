@@ -1,9 +1,4 @@
-#[[##]]#
-#[[##]]# EPITECH PROJECT, ${YEAR}
-#[[##]]# ${PROJECT_NAME}
-#[[##]]# File description:
-#[[##]]# ${FILE_NAME}
-#[[##]]#
+#parse("Epitech Makefile Header.h")
 
 SRC = ${SRC_FILES}
 

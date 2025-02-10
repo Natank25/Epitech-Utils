@@ -3,6 +3,8 @@
 #[[#ifndef]]# ${INCLUDE_GUARD}
     #[[#define]]# ${INCLUDE_GUARD}
 
-
+#if(!$BODY.isEmpty())
+${BODY}
+#end
 
 #[[#endif]]# //${INCLUDE_GUARD}

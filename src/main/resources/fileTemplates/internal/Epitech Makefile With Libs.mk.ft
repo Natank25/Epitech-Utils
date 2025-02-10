@@ -1,15 +1,12 @@
 #parse("Epitech Makefile Header.h")
 
-SRC = $(addprefix, src,	\
-		${BIN_NAME}.c	\
-		)
+SRC = src/${BIN_NAME}.c
 
 OBJ = $(SRC:.c=.o)
 
 MAIN = src/main.c
 
-TESTS_SRC = $(add_prefix tests/,	\
-			)
+TESTS_SRC =
 
 TESTS_OBJ = $(TESTS_SRC:.c=.o)
 
@@ -17,12 +14,26 @@ CPPFLAGS += -iquote ./include/
 
 CFLAGS += -Wall -Wextra
 
+LIBRARIES += my
+
+LIBC_LIBS +=
+
+LIB_FILES = $(addsuffix .a, $(addprefix lib, $(LIBRARIES)))
+
+LIB_FILES_FROM_ROOT = $(addprefix lib/, $(LIB_FILES))
+
+LIB_SRC = $(addprefix lib/, $(LIBRARIES))
+
+LDLIBS += $(addprefix -l, $(LIBRARIES)) $(addprefix -l, $(LIBC_LIBS))
+
+LDFLAGS += -L./lib/
+
 NAME = mysh
 
 DEBUG_FLAGS = -g3
 
 UNIT_TESTS_FLAGS = --coverage -lcriterion
-FLAGS = $(LDFLAGS) $(CPPFLAGS) $(CFLAGS)
+FLAGS = $(LDFLAGS) $(LDLIBS) $(CPPFLAGS) $(CFLAGS)
 
 BIN_NAME = a.out
 
@@ -32,13 +43,13 @@ all: $(NAME)
 
 $(NAME): BIN_NAME = $(NAME)
 $(NAME): OBJ_FILES = $(OBJ) $(MAIN:.c=.o)
-$(NAME): $(OBJ) $(MAIN:.c=.o) $(TESTS_OBJ)
+$(NAME): $(LIB_FILES_FROM_ROOT) $(OBJ) $(MAIN:.c=.o) $(TESTS_OBJ)
 	$(CC) $(OBJ_FILES) -o $(BIN_NAME) $(FLAGS)
 
 dev: FLAGS += $(DEBUG_FLAGS)
 dev: BIN_NAME = dev
 dev: OBJ_FILES = $(SRC) $(MAIN)
-dev:
+dev: $(LIB_FILES_FROM_ROOT)
 	$(CC) $(OBJ_FILES) -o $(BIN_NAME) $(FLAGS)
 
 sanitizer-dev: DEBUG_FLAGS += -fsanitize=address
@@ -78,7 +89,7 @@ re_dev: fclean dev
 unit_tests: BIN_NAME = unit_tests
 unit_tests: FLAGS += $(DEBUG_FLAGS) $(UNIT_TESTS_FLAGS)
 unit_tests: OBJ_FILES = $(SRC) $(TESTS_SRC)
-unit_tests:
+unit_tests: $(LIB_FILES_FROM_ROOT)
 ifneq ($(COVERAGE_FILES),)
 	$(RM) $(COVERAGE_FILES)
 endif
@@ -89,6 +100,9 @@ sanitizer-unit_tests: unit_tests
 
 tests_run: unit_tests
 	./unit_tests
+
+$(LIB_FILES_FROM_ROOT):
+	$(foreach dir, $(LIB_SRC), make -C $(dir))
 
 .PHONY: sanitizer-dev clean fclean re re_dev	 	\
 	sanitizer-unit_tests tests_run sanitizer_on		\
