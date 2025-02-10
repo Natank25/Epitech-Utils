@@ -17,7 +17,7 @@ CPPFLAGS += -iquote ./include/
 
 CFLAGS += -Wall -Wextra
 
-NAME = mysh
+NAME = ${BIN_NAME}
 
 DEBUG_FLAGS = -g3
 

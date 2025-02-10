@@ -1,6 +1,8 @@
 #parse("Epitech Header.h")
 
-#[[#include <criterion/criterion.h>]]#
+#[[#include]]# <criterion/criterion.h>
+
+#[[#include]]# "${BIN_NAME}.h"
 
 Test(${FILE_NAME}, test_name)
 {

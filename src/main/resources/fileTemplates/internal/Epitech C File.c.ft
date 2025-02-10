@@ -1,13 +1,7 @@
 #parse("Epitech Header.h")
 
-#set($libs_arr = $libs.split(" "))
-#set($lib = "")
-#foreach($lib in $libs_arr)
-    #if($lib != "")
-    #[[#include]]# "${lib}.h
+#[[#include]]# "${BIN_NAME}.h"
 
-    #end
-#end
 #if(!$body.isEmpty())
 ${body}
 #end

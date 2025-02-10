@@ -28,7 +28,7 @@ LDLIBS += $(addprefix -l, $(LIBRARIES)) $(addprefix -l, $(LIBC_LIBS))
 
 LDFLAGS += -L./lib/
 
-NAME = mysh
+NAME = ${BIN_NAME}
 
 DEBUG_FLAGS = -g3
 

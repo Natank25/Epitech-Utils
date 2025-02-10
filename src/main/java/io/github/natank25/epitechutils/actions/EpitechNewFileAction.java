@@ -95,9 +95,11 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 		addFileInMakefile(project, file, "TESTS_SRC");
 	}
 	
-	public static Properties createProperties(Project project, String filename) {
+	public static Properties createProperties(Project project) {
 		Properties properties = FileTemplateManager.getInstance(project).getDefaultProperties();
-		properties.setProperty("EPITECH_PROJECT_NAME", EpitechUtilsConfiguration.getInstance(project).PROJECT_NAME);
+		EpitechUtilsConfiguration configuration = EpitechUtilsConfiguration.getInstance(project);
+		properties.setProperty("EPITECH_PROJECT_NAME", configuration.PROJECT_NAME);
+		properties.setProperty("BIN_NAME", configuration.BINARY_NAME);
 		return properties;
 	}
 	
@@ -172,7 +174,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 			return file;
 		}
 		if (Objects.equals(templateName, EpitechTemplates.C_TEST_FILE)){
-			PsiFile file = super.createFile(name, templateName, dir);
+			PsiFile file = EpitechTemplates.createCTestFileFromTemplate(project, name, dir.getVirtualFile(), new Properties()).getContainingFile();
 			addTestFileInMakefile(project, file);
 			return file;
 		}

@@ -123,12 +123,12 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 		}
 	}
 	
-	private static void createIncludeDirectory(@NotNull Project project, @NotNull VirtualFile baseDir) {
+	private static void createIncludeDirectory(@NotNull Project project, @NotNull VirtualFile baseDir, String binary_name) {
 		VirtualFile include;
 		try {
 			include = baseDir.createChildDirectory(project, "include");
 			CidrRootConfiguration.getInstance(project).addSourceRoot(include);
-			EpitechTemplates.createHeaderFileFromTemplate(project, project.getName() + ".h", include);
+			EpitechTemplates.createHeaderFileFromTemplate(project, binary_name + ".h", include);
 			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -205,7 +205,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 	private void createFilesAndFolders(@NotNull Project project, @NotNull VirtualFile baseDir, EpitechUtilsConfiguration configuration) {
 		ApplicationManager.getApplication().runWriteAction(() ->
 		{
-			createIncludeDirectory(project, baseDir);
+			createIncludeDirectory(project, baseDir, configuration.BINARY_NAME);
 			createSourceDirectory(project, baseDir);
 			createTestsDirectory(project, baseDir);
 			createLibDirectory(project, baseDir);

@@ -24,7 +24,7 @@ public class EpitechTemplates {
 	public static final String LIBRARY_MAKEFILE = "Library Makefile.mk";
 	
 	public static @NotNull PsiElement createFromTemplate(Project project, String fileName, PsiDirectory dir, Templates template, @Nullable Properties properties){
-		Properties defaultProperties = EpitechNewFileAction.createProperties(project, fileName);
+		Properties defaultProperties = EpitechNewFileAction.createProperties(project);
 		if (properties != null)
 			defaultProperties.putAll(properties);
 		try {
@@ -54,6 +54,10 @@ public class EpitechTemplates {
 	
 	public static @NotNull PsiElement createCFileFromTemplate(Project project, String fileName, VirtualFile dir, Properties properties){
 		return createFromTemplate(project, fileName, PsiManager.getInstance(project).findDirectory(dir), Templates.C_FILE, properties);
+	}
+
+	public static @NotNull PsiElement createCTestFileFromTemplate(Project project, String fileName, VirtualFile dir, Properties properties){
+		return createFromTemplate(project, fileName, PsiManager.getInstance(project).findDirectory(dir), Templates.C_TEST_FILE, properties);
 	}
 	
 	public static @NotNull PsiElement createHeaderFileFromTemplate(Project project, String fileName, VirtualFile dir){
