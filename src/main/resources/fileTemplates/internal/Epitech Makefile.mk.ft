@@ -1,15 +1,15 @@
 #parse("Epitech Makefile Header.h")
 
 SRC = $(addprefix, src,	\
-		${BIN_NAME}.c	\
-		)
+	${BIN_NAME}.c	\
+	)
 
 OBJ = $(SRC:.c=.o)
 
 MAIN = src/main.c
 
 TESTS_SRC = $(add_prefix tests/,	\
-			)
+		)
 
 TESTS_OBJ = $(TESTS_SRC:.c=.o)
 
