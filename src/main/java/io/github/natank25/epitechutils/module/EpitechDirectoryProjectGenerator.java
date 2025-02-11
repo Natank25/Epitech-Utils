@@ -1,5 +1,6 @@
 package io.github.natank25.epitechutils.module;
 
+import com.intellij.docker.DockerCloudType;
 import com.intellij.docker.DockerDeploymentConfiguration;
 import com.intellij.docker.DockerRunConfigurationCreator;
 import com.intellij.docker.agent.DockerAgentDeploymentConfig;
@@ -24,6 +25,7 @@ import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel;
 import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.platform.DirectoryProjectGeneratorBase;
 import com.intellij.platform.ProjectGeneratorPeer;
+import com.intellij.remoteServer.ServerType;
 import com.intellij.remoteServer.configuration.RemoteServer;
 import com.intellij.remoteServer.configuration.RemoteServersManager;
 import com.intellij.remoteServer.configuration.deployment.DeploymentSource;
@@ -68,7 +70,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 		
 		DockerDeploymentConfiguration deploymentConfig = getDockerDeploymentConfiguration(project);
 		
-		RemoteServer<?> remoteServer = RemoteServersManager.getInstance().getServers().stream().filter(remoteServer1 -> remoteServer1.getName().equals("Docker")).findFirst().orElseThrow(() -> new RuntimeException("Docker server not found"));
+		RemoteServer<?> remoteServer = RemoteServersManager.getInstance().createServer(DockerCloudType.getInstance());
 		
 		DockerRunConfigurationCreator dockerRunConfigurationCreator = new DockerRunConfigurationCreator(project);
 		RunnerAndConfigurationSettings configurationSettings = dockerRunConfigurationCreator.createConfiguration(adaptedSourceType, deploymentConfig, remoteServer);
@@ -165,18 +167,6 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 		return "Epitech project";
 	}
 	
-	private static ShRunConfiguration createDeleteReportsRunConfiguration(@NotNull Project project) {
-		if (RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report") == null){
-			ShRunConfiguration templateConfiguration = (ShRunConfiguration) ShConfigurationType.getInstance().createTemplateConfiguration(project);
-			templateConfiguration.setExecuteScriptFile(false);
-			templateConfiguration.setExecuteInTerminal(false);
-			templateConfiguration.setName("Delete Coding Style Report Logs");
-			templateConfiguration.setScriptText("rm -f coding-style-reports.log");
-			return templateConfiguration;
-		}
-		return ((ShRunConfiguration) Objects.requireNonNull(RunManager.getInstance(project).findConfigurationByName("Generate Coding Style Report")).getConfiguration());
-	}
-	
 	private void createLibDirectory(@NotNull Project project, @NotNull VirtualFile baseDir) {
 		VirtualFile lib;
 		try {
@@ -190,16 +180,15 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
 	
 	public static void createCodingStyleRunConfiguration(@NotNull Project project) {
 		RunManager runManager = RunManager.getInstance(project);
-		RunConfiguration shRunConfiguration = createDeleteReportsRunConfiguration(project);
 		RunnerAndConfigurationSettings dockerRunConfiguration = createDockerRunConfiguration(project);
-		RunnerAndConfigurationSettings shConfigurationSettings = runManager.createConfiguration(shRunConfiguration, ShConfigurationType.getInstance());
-		runManager.addConfiguration(shConfigurationSettings);
+		//RunnerAndConfigurationSettings shConfigurationSettings = runManager.createConfiguration(shRunConfiguration, ShConfigurationType.getInstance());
+		//runManager.addConfiguration(shConfigurationSettings);
 		runManager.addConfiguration(dockerRunConfiguration);
 		
-		RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask task = Objects.requireNonNull(RunConfigurationBeforeRunProvider.getProvider(project, RunConfigurationBeforeRunProvider.ID)).createTask(shRunConfiguration);
-		if (task == null) return;
-		task.setSettingsWithTarget(shConfigurationSettings, DefaultExecutionTarget.INSTANCE);
-		runManager.getConfigurationsList(dockerRunConfiguration.getType()).forEach(runConfiguration -> runConfiguration.setBeforeRunTasks(new ArrayList<>(Collections.singletonList(task))));
+		//RunConfigurationBeforeRunProvider.RunConfigurableBeforeRunTask task = Objects.requireNonNull(RunConfigurationBeforeRunProvider.getProvider(project, RunConfigurationBeforeRunProvider.ID)).createTask(shRunConfiguration);
+		//if (task == null) return;
+		//task.setSettingsWithTarget(shConfigurationSettings, DefaultExecutionTarget.INSTANCE);
+		//runManager.getConfigurationsList(dockerRunConfiguration.getType()).forEach(runConfiguration -> runConfiguration.setBeforeRunTasks(new ArrayList<>(Collections.singletonList(task))));
 	}
 	
 	private void createFilesAndFolders(@NotNull Project project, @NotNull VirtualFile baseDir, EpitechUtilsConfiguration configuration) {

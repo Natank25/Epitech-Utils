@@ -14,23 +14,26 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.dsl.builder.Align
 import com.intellij.ui.dsl.builder.TopGap
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.util.maximumHeight
+import com.intellij.util.ui.UIUtil.FontColor
+import com.jetbrains.rd.util.string.print
 import io.github.natank25.epitechutils.module.EpitechDirectoryProjectGenerator
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
+import java.awt.Color
+import java.awt.Component
 import java.io.IOException
 import java.nio.file.Path
 import javax.swing.BorderFactory
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JTextArea
-import javax.swing.border.Border
+import javax.swing.plaf.ColorUIResource
 
 class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
@@ -40,7 +43,7 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
     }
 
     private class CodingStyleToolWindowContent(private val project: Project) {
-        var ErrorList: List<CodingStyleError> = ArrayList()
+        var errorList: List<CodingStyleError> = ArrayList()
         val tabbedPane: JBTabbedPane = JBTabbedPane()
         val refreshButton: JButton = JButton("Refresh")
         val errorWindowList: List<ErrorListWindow> = listOf(
@@ -112,13 +115,9 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
             updateErrorList(file)
 
             for ((index, window) in errorWindowList.withIndex()) {
-                window.updateList(ErrorList)
-                tabbedPane.setTitleAt(index, window.getTitle())
+                window.updateList(errorList)
+                tabbedPane.setTabComponentAt(index, window.getTitle())
             }
-        }
-
-        private fun updateErrorListWindow() {
-
         }
 
         private fun updateErrorList(file: VirtualFile) {
@@ -128,7 +127,7 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
             } catch (e: IOException) {
                 throw RuntimeException(e)
             }
-            ErrorList = generateErrorList(reportResult)
+            errorList = generateErrorList(reportResult)
         }
 
         private fun generateErrorList(string: String): List<CodingStyleError> {
@@ -156,16 +155,27 @@ class CodingStyleToolWindowFactory : ToolWindowFactory, DumbAware {
 
 
     private class ErrorListWindow(val severity: ErrorListType) : JTextArea() {
-        var errorList : List<CodingStyleError> = emptyList()
-        fun getTitle() : (String) {return severity.string + " (" + errorList.size + ")"}
+        var errorList: List<CodingStyleError> = emptyList()
+        fun getTitle(): (Component) {
+            val title: JBLabel = JBLabel()
+            title.text = severity.string + " (" + errorList.size + ")"
+            title.foreground = getTitleColor()
+            return title
+        }
+
+        fun getTitleColor(): (Color) {
+            if (errorList.isEmpty())
+                return JBColor.GREEN
+            return JBColor.RED
+        }
 
         val scrollPane = JBScrollPane(this)
 
-        fun updateList(fullErrorList: List<CodingStyleError>){
+        fun updateList(fullErrorList: List<CodingStyleError>) {
             errorList = fullErrorList.filter { error ->
-                if (hiddenErrorCode.contains(error.errorCode)){
+                if (hiddenErrorCode.contains(error.errorCode)) {
                     this.severity == ErrorListType.HIDDEN
-                }else
+                } else
                     this.severity.string == error.severity.string
             }
             this.text = ""
