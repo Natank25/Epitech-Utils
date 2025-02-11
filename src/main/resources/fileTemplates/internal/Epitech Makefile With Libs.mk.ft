@@ -47,7 +47,7 @@ $(NAME): $(LIB_FILES_FROM_ROOT) $(OBJ) $(MAIN:.c=.o) $(TESTS_OBJ)
 	$(CC) $(OBJ_FILES) -o $(BIN_NAME) $(FLAGS)
 
 dev: FLAGS += $(DEBUG_FLAGS)
-dev: BIN_NAME = dev
+dev: BIN_NAME = $(NAME)
 dev: OBJ_FILES = $(SRC) $(MAIN)
 dev: $(LIB_FILES_FROM_ROOT)
 	$(CC) $(OBJ_FILES) -o $(BIN_NAME) $(FLAGS)
@@ -56,18 +56,18 @@ sanitizer-dev: DEBUG_FLAGS += -fsanitize=address
 sanitizer-dev: dev
 
 clean: clean_coverage_report
-ifneq ($(shell find . -name $(notdir $(OBJ))),)
+ifneq ($(shell find . -name "$(notdir $(OBJ))"),)
 	$(RM) $(OBJ)
 endif
-ifneq ($(shell find . -name $(notdir $(TESTS_OBJ))),)
+ifneq ($(shell find . -name "$(notdir $(TESTS_OBJ))"),)
 	$(RM) $(TESTS_OBJ)
 endif
-ifneq ($(shell find . -name $(notdir $(MAIN:.c=.o))),)
+ifneq ($(shell find . -name "$(notdir $(MAIN:.c=.o))"),)
 	$(RM) $(MAIN:.c=.o)
 endif
 
 fclean:	clean
-ifneq ($(shell find . -name $(NAME)),)
+ifneq ($(shell find . -name "$(NAME)"),)
 	$(RM) $(NAME)
 endif
 ifneq ($(shell find . -name unit_tests),)

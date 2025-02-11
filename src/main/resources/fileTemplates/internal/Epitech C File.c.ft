@@ -1,7 +1,5 @@
 #parse("Epitech Header.h")
 
 #[[#include]]# "${BIN_NAME}.h"
-
 #if(!$body.isEmpty())
-${body}
-#end
+    ${body}#end
