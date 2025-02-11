@@ -31,6 +31,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.remoteServer.configuration.RemoteServer;
 import com.intellij.remoteServer.configuration.RemoteServersManager;
 import com.intellij.remoteServer.configuration.deployment.DeploymentSource;
+import com.intellij.sh.run.ShConfigurationType;
+import com.intellij.sh.run.ShRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.compound.CLionNativeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.compound.CLionNativeAppRunConfigurationType;
 import com.jetbrains.cidr.cpp.makefile.MakefileUtil;
@@ -235,6 +237,21 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
         settings.setName("fclean");
         manager.addConfiguration(settings);
         createCodingStyleRunConfiguration(project);
+        createGenerateCoverageRunConfiguration(project);
+    }
+
+    private void createGenerateCoverageRunConfiguration(Project project){
+        ShRunConfiguration generateCoverageConfig = (ShRunConfiguration) ShConfigurationType.getInstance().createTemplateConfiguration(project);
+        generateCoverageConfig.setExecuteScriptFile(false);
+        generateCoverageConfig.setExecuteInTerminal(false);
+        generateCoverageConfig.setName("Generate Coverage");
+        generateCoverageConfig.setScriptText("mkdir coverage & gcovr --txt-metric=branch --html-details -o coverage/result.html --exclude tests/");
+        RunManager manager = RunManager.getInstance(project);
+        RunnerAndConfigurationSettings unitTests = manager.findConfigurationByTypeAndName(CLionNativeAppRunConfigurationType.ID, "unit_tests");
+        if (unitTests != null)
+            generateCoverageConfig.setBeforeRunTasks(List.of(unitTests));
+        RunnerAndConfigurationSettings configuration = manager.createConfiguration(generateCoverageConfig, ShConfigurationType.getInstance());
+        manager.addConfiguration(configuration);
     }
 
     private void setExecutableInRunConfiguration(Project project, String binary_name) {
