@@ -4,7 +4,7 @@ import com.intellij.openapi.ui.ValidationInfo
 
 data class EpitechProjectSettings(
     var binName: String = "",
-    var useLibMy: Boolean = false,
+    var useLib: Boolean = false,
     var projectName: String = "",
     var libPath: String? = null,
     var gitRepo: String = "",

@@ -12,7 +12,7 @@ public final class EpitechUtilsConfiguration implements PersistentStateComponent
 	
 	public String BINARY_NAME = null;
 	public String PROJECT_NAME = null;
-	
+	public boolean USE_LIB = false;
 	@Override
 	public @NotNull EpitechUtilsConfiguration getState() {
 		return this;

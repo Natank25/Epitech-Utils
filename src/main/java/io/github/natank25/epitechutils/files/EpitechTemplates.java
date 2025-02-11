@@ -21,6 +21,7 @@ public class EpitechTemplates {
 	public static final String MAKEFILE = "Epitech Makefile.mk";
 	public static final String GITIGNORE = ".gitignore";
 	public static final String C_TEST_FILE = "Epitech C Test File.c";
+	public static final String MAKEFILE_WITH_LIBS = "Epitech Makefile With Libs.mk";
 	public static final String LIBRARY_MAKEFILE = "Library Makefile.mk";
 	
 	public static @NotNull PsiElement createFromTemplate(Project project, String fileName, PsiDirectory dir, Templates template, @Nullable Properties properties){
@@ -70,10 +71,10 @@ public class EpitechTemplates {
 		return createFromTemplate(project, ".gitignore", PsiManager.getInstance(project).findDirectory(dir), Templates.GITIGNORE, gitignorProperties);
 	}
 	
-	public static @NotNull PsiElement createMakefileFileFromTemplate(Project project, VirtualFile dir, String binary_name){
+	public static @NotNull PsiElement createMakefileFileFromTemplate(Project project, VirtualFile dir, String binary_name, boolean useLib){
 		Properties makefileProperties = new Properties();
 		makefileProperties.setProperty("BIN_NAME", binary_name);
-		PsiElement file = createFromTemplate(project, "Makefile", PsiManager.getInstance(project).findDirectory(dir), Templates.MAKEFILE, makefileProperties);
+		PsiElement file = createFromTemplate(project, "Makefile", PsiManager.getInstance(project).findDirectory(dir), useLib ? Templates.MAKEFILE_WITH_LIBS : Templates.MAKEFILE, makefileProperties);
 		((PsiFile) file).setName("Makefile");
 		return file;
 	}
@@ -93,8 +94,9 @@ public class EpitechTemplates {
 		MAKEFILE(EpitechTemplates.MAKEFILE),
 		GITIGNORE(EpitechTemplates.GITIGNORE),
 		C_TEST_FILE(EpitechTemplates.C_TEST_FILE),
-		LIBRARY_MAKEFILE(EpitechTemplates.LIBRARY_MAKEFILE);
-		
+		LIBRARY_MAKEFILE(EpitechTemplates.LIBRARY_MAKEFILE),
+		MAKEFILE_WITH_LIBS(EpitechTemplates.MAKEFILE_WITH_LIBS);
+
 		private final String filename;
 		
 		Templates(final String name){

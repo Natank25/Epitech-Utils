@@ -188,6 +188,6 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	}
 	
 	private PsiFile createMakefile(PsiDirectory dir) {
-		return EpitechTemplates.createMakefileFileFromTemplate(dir.getProject(), dir.getVirtualFile(), "").getContainingFile();
+		return EpitechTemplates.createMakefileFileFromTemplate(dir.getProject(), dir.getVirtualFile(), "", false).getContainingFile();
 	}
 }

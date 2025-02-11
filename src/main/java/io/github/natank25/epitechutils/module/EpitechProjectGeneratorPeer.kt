@@ -7,10 +7,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.Disposer
 import com.intellij.platform.ProjectGeneratorPeer
-import com.intellij.ui.dsl.builder.COLUMNS_LARGE
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.columns
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.*
 import javax.swing.JComponent
 import javax.swing.JTextField
 
@@ -40,6 +37,10 @@ class EpitechProjectGeneratorPeer : ProjectGeneratorPeer<EpitechProjectSettings>
                     .onChanged {
                         checkValid()
                     }
+            }
+            row {
+                checkBox("Use library")
+                    .bindSelected(settings::useLib)
             }
         }
         checkValid()

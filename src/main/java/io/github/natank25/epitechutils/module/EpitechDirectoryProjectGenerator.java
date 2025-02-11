@@ -68,6 +68,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
         EpitechUtilsConfiguration configuration = EpitechUtilsConfiguration.getInstance(project);
         configuration.BINARY_NAME = settings.getBinName();
         configuration.PROJECT_NAME = settings.getProjectName();
+        configuration.USE_LIB = settings.getUseLib();
         return configuration;
     }
 
@@ -201,7 +202,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
             createSourceDirectory(project, baseDir);
             createTestsDirectory(project, baseDir);
             createLibDirectory(project, baseDir);
-            EpitechTemplates.createMakefileFileFromTemplate(project, baseDir, configuration.BINARY_NAME);
+            EpitechTemplates.createMakefileFileFromTemplate(project, baseDir, configuration.BINARY_NAME, configuration.USE_LIB);
             EpitechTemplates.createGitignoreFileFromTemplate(project, baseDir, configuration.BINARY_NAME);
         });
     }

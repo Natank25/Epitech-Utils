@@ -1,34 +1,26 @@
 package io.github.natank25.epitechutils.actions;
 
-import com.intellij.lang.Language;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiManager;
 import com.jetbrains.lang.makefile.MakefileFile;
 import com.jetbrains.lang.makefile.psi.MakefileVariableAssignment;
 import io.github.natank25.epitechutils.EpitechNotifications;
 import io.github.natank25.epitechutils.files.EpitechTemplates;
 import io.github.natank25.epitechutils.project.EpitechUtilsConfiguration;
-import kotlin.collections.EmptyList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class BuildLibrary extends AnAction {
 	
