@@ -66,6 +66,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 		String relativePath = getRelativePathFromProjectRoot(file, project);
 		if (relativePath == null) return;
 		relativePath = relativePath.replace("src/", "");
+		relativePath = relativePath.replace("tests/", "");
 		Document document = makefile.getFileDocument();
 		
 		PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document);
@@ -79,9 +80,9 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 			separator = "\t";
 			currentValue = variable + " =";
 		} else
-			separator = "\n" + (variable.equals("SRC") ? "\t\t" : "\t\t\t");
+			separator = "\\\n" + (variable.equals("SRC") ? "\t" : "\t\t");
 		String substring = currentValue.substring(0, currentValue.length() - 2 - (variable.equals("SRC") ? 2 : 3));
-		String updatedValue = substring + separator + relativePath + "\t\\\n\t" + (variable.equals("SRC") ? "\t" : "\t\t") + ')';
+		String updatedValue = substring + separator + relativePath + "\t\\\n" + (variable.equals("SRC") ? "\t" : "\t\t") + ')';
 		String updatedContent = document.getText().replace(currentValue, updatedValue);
 		WriteCommandAction.runWriteCommandAction(project, () -> document.setText(updatedContent));
 		PsiDocumentManager.getInstance(project).commitDocument(document);
