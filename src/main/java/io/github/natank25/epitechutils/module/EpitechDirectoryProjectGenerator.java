@@ -226,7 +226,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
         return null;
     }
 
-    private void createFcleanMakefileTarget(@NotNull Project project) {
+    private static void createFcleanMakefileTarget(@NotNull Project project) {
         MakefileTarget target = findMakefileTarget(project, "fclean");
 
         if (target == null)
@@ -241,12 +241,12 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
         createGenerateCoverageRunConfiguration(project);
     }
 
-    private void createGenerateCoverageRunConfiguration(Project project){
+    private static void createGenerateCoverageRunConfiguration(Project project){
         ShRunConfiguration generateCoverageConfig = (ShRunConfiguration) ShConfigurationType.getInstance().createTemplateConfiguration(project);
         generateCoverageConfig.setExecuteScriptFile(false);
         generateCoverageConfig.setExecuteInTerminal(false);
         generateCoverageConfig.setName("Generate Coverage");
-        generateCoverageConfig.setScriptText("mkdir coverage & gcovr --txt-metric=branch --html-details -o coverage/result.html --exclude tests/");
+        generateCoverageConfig.setScriptText("mkdir coverage & gcovr --txt-metric=branch --html-details -o coverage/result.html --exclude tests/ --html-theme github.dark-green --html-medium-threshold 60");
         RunManager manager = RunManager.getInstance(project);
         RunnerAndConfigurationSettings unitTests = manager.findConfigurationByTypeAndName(CLionNativeAppRunConfigurationType.ID, "unit_tests");
         if (unitTests != null)
@@ -255,7 +255,7 @@ public class EpitechDirectoryProjectGenerator extends DirectoryProjectGeneratorB
         manager.addConfiguration(configuration);
     }
 
-    private void setExecutableInRunConfiguration(Project project, String binary_name) {
+    public static void setExecutableInRunConfiguration(Project project, String binary_name) {
         RunManager runManager = RunManager.getInstance(project);
         runManager.getConfigurationsList(new CLionNativeAppRunConfigurationType()).forEach(runConfiguration -> {
             if (!(runConfiguration instanceof CLionNativeAppRunConfiguration clionRunConfig))

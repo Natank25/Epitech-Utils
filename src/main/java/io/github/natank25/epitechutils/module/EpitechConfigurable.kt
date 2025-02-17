@@ -34,6 +34,11 @@ class EpitechConfigurable internal constructor(private val project: Project) : B
                     EpitechDirectoryProjectGenerator.createCodingStyleRunConfiguration(project);
                 }
             }
+            row {
+                button("Add Executable to Run Configurations") {
+                    EpitechDirectoryProjectGenerator.setExecutableInRunConfiguration(project, settings.BINARY_NAME)
+                }
+            }
         }
     }
 

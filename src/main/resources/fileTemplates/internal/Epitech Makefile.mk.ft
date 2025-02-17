@@ -1,6 +1,6 @@
 #parse("Epitech Makefile Header.h")
 
-SRC = $(addprefix, src,	\
+SRC = $(addprefix src/,	\
 	${BIN_NAME}.c	\
 	)
 
