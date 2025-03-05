@@ -14,10 +14,7 @@ import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.jetbrains.cidr.cpp.makefile.MakefileUtil;
 import com.jetbrains.cidr.cpp.makefile.project.resolver.MkProjectResolverPolicy;
 import com.jetbrains.lang.makefile.MakefileFile;
@@ -27,6 +24,7 @@ import io.github.natank25.epitechutils.icons.EpitechUtilsIcons;
 import io.github.natank25.epitechutils.project.EpitechUtilsConfiguration;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -48,11 +46,17 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	}
 	
 	public static void addFileInMakefile(Project project, PsiFile file, @NotNull String variable) {
-		VirtualFile virtualMakefile = VfsUtil.findFile(Path.of(Objects.requireNonNull(project.getBasePath()), "/Makefile"), true);
+		String basePath = project.getBasePath();
+		if (basePath == null)
+			throw new RuntimeException("basePath is null");
+		VirtualFile virtualMakefile = VfsUtil.findFile(Path.of(basePath, "/Makefile"), true);
 		if (virtualMakefile == null || !virtualMakefile.exists())
 			return;
-		
-		MakefileFile makefile = new MakefileFile(Objects.requireNonNull(PsiManager.getInstance(project).findViewProvider(virtualMakefile)));
+
+		FileViewProvider viewProvider = PsiManager.getInstance(project).findViewProvider(virtualMakefile);
+		if (viewProvider == null)
+			throw new RuntimeException("basePath is null");
+		MakefileFile makefile = new MakefileFile(viewProvider);
 		
 		MakefileVariableAssignment[] assignments = makefile.findChildrenByClass(MakefileVariableAssignment.class);
 		
@@ -62,7 +66,6 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 				.orElse(null);
 		
 		if (targetAssignment == null) return;
-		
 		String relativePath = getRelativePathFromProjectRoot(file, project);
 		if (relativePath == null) return;
 		relativePath = relativePath.replace("src/", "");
@@ -99,7 +102,11 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	public static Properties createProperties(Project project) {
 		Properties properties = FileTemplateManager.getInstance(project).getDefaultProperties();
 		EpitechUtilsConfiguration configuration = EpitechUtilsConfiguration.getInstance(project);
+		if (configuration.PROJECT_NAME == null)
+			throw new RuntimeException("You must specify a project name");
 		properties.setProperty("EPITECH_PROJECT_NAME", configuration.PROJECT_NAME);
+		if (configuration.PROJECT_NAME == null)
+			throw new RuntimeException("You must specify a binary name");
 		properties.setProperty("BIN_NAME", configuration.BINARY_NAME);
 		return properties;
 	}
@@ -108,6 +115,7 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	protected void buildDialog(@NotNull Project project, @NotNull PsiDirectory directory, CreateFileFromTemplateDialog.@NotNull Builder builder) {
 		builder.setTitle("Epitech File");
 
+		if (project.getBasePath() == null) throw new NullPointerException("project.getBasePath() is null");
 		String dirPathFromRoot = directory.getVirtualFile().getPath().replace(project.getBasePath(), "");
 		if (dirPathFromRoot.contains("tests")){
 			builder.addKind("C test file", EpitechUtilsIcons.EpitechIcon_150x150, EpitechTemplates.C_TEST_FILE, new InputValidator() {
@@ -160,9 +168,12 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 	@Override
 	protected PsiFile createFile(String name, String templateName, PsiDirectory dir) {
 		Project project = dir.getProject();
-		
+
 		ImportSpec importSpec = (new ImportSpecBuilder(project, MakefileUtil.ID)).projectResolverPolicy((new MkProjectResolverPolicy(false))).build();
-		ExternalSystemUtil.refreshProject(project.getBasePath(), importSpec);
+		String basePath = getBasePath(project);
+		if (basePath == null)
+			throw new RuntimeException("basePath is null");
+		ExternalSystemUtil.refreshProject(basePath, importSpec);
 		
 		if (Objects.equals(templateName, EpitechTemplates.MAKEFILE))
 			return createMakefile(dir);
@@ -181,8 +192,12 @@ public class EpitechNewFileAction extends CreateFileFromTemplateAction {
 		}
 		return super.createFile(name, templateName, dir);
 	}
-	
-	
+
+	private static @NonNls @Nullable String getBasePath(Project project) {
+		return project.getBasePath();
+	}
+
+
 	@Override
 	protected @NlsContexts.Command String getActionName(PsiDirectory directory, @NonNls @NotNull String newName, @NonNls String templateName) {
 		return "Create Epitech " + newName;
