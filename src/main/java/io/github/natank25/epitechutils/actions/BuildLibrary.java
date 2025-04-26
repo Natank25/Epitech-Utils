@@ -50,7 +50,7 @@ public class BuildLibrary extends AnAction {
 			return;
 		String libName = getLibName(project);
 		if (libName == null) {
-			EpitechNotifications.sendNotification(project, "Current project is not suitable for creating a library out of it.", NotificationType.WARNING);
+			EpitechNotifications.sendNotification(project, "Current project is not suitable for creating a library out of it. Name must be of like lib*.a", NotificationType.WARNING);
 			return;
 		}
 		

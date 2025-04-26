@@ -45,15 +45,9 @@ sanitizer-dev: DEBUG_FLAGS += -fsanitize=address
 sanitizer-dev: dev
 
 clean: clean_coverage_report
-ifneq ($(shell find . -name "$(notdir $(OBJ))"),)
 	$(RM) $(OBJ)
-endif
-ifneq ($(shell find . -name "$(notdir $(TESTS_OBJ))"),)
 	$(RM) $(TESTS_OBJ)
-endif
-ifneq ($(shell find . -name "$(notdir $(MAIN:.c=.o))"),)
 	$(RM) $(MAIN:.c=.o)
-endif
 
 fclean:	clean
 ifneq ($(shell find . -name "$(NAME)"),)
@@ -89,4 +83,4 @@ tests_run: unit_tests
 
 .PHONY: sanitizer-dev clean fclean re re_dev	 	\
 	sanitizer-unit_tests tests_run sanitizer_on		\
-	clean_coverage_report
+	clean_coverage_report unit_tests
